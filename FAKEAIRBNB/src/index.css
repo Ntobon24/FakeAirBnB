@@ -8,3 +8,9 @@ body {
   font-family: Arial, sans-serif;
   color: #333;
 }
+
+html,
+body,
+#root {
+  height: 100%;
+}

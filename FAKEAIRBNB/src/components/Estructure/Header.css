@@ -1,0 +1,41 @@
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: red;
+  margin-right: 20px;
+  
+}
+
+.search-bar {
+  flex-grow: 1;
+  padding: 8px;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  margin: 0 auto;
+}
+
+.prop-option{
+  font-size: 15px;
+  margin-right: 20px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: none;
+  border: none;
+
+}
+.prop-option:hover{
+  
+  background-color:#eaeaeab7;
+
+}

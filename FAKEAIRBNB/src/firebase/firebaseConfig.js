@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,7 +11,26 @@ const firebaseConfig = {
   measurementId: "G-YQZMCKR504"
 };
 
+
+
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+
+// Configuración de persistencia en el navegador para la autenticación de usuarios con Firebase 
+const auth = getAuth(app);
+
+
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    console.log("Persistencia configurada");
+  })
+  .catch((error) => {
+    console.error("Error configurando persistencia:", error);
+  });
+
+
+export default app;
 
 export { db, collection, getDocs, addDoc };

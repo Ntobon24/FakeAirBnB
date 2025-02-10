@@ -5,16 +5,18 @@ import PropertyList from "./components/PropertyList/PropertyList";
 import Reserva from "./pages/Reserva/Reserva";
 import MapWithMarkers from "./components/MapWithMarkers/MapWithMarkers";
 import AddPropertiesOnce from "./pages/AddPropertiesOnce/AddPropertiesOnce";
-import Header from "./components/Estructure/Header/Header";
+import Header from "./components/Estructure/Header";
+import "./App.css";
+
 function App() {
   return (
     
     <Router>
-      <div className="container">
+      <div className="cajita-grande">
         <Header />
         <main className="content">
 
-        <Routes>
+        <Routes> 
           <Route path="/" element={<Home />} />
           <Route path="/propiedades" element={<PropertyList />} />
           <Route path="/reserva/:id" element={<Reserva />} />
