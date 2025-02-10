@@ -1,4 +1,5 @@
-.user-options {
+.user-options,
+.cerrar-sesion {
     font-size: 15px;
     margin-right: 20px;
     padding: 8px 16px;
@@ -7,11 +8,25 @@
     border: none;
   
   }
-  .user-options:hover{
+.user-options:hover{
     
     background-color:#eaeaeab7;
   
   }
+.cerrar-sesion:hover{
+    background-color: #ff385d;
+    color: white;
+}
+
+.titulo-bienvenida{
+    font-size: 15px;
+    color: #000000;
+    padding-top: 6px;
+}
+.bienvenida{
+    display: flex;
+    align-items: center; /* Alinear el texto y botones en línea */
+    gap: 15px; }
 
 .boton-enviar{
     width: 100%;
@@ -22,6 +37,7 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    margin-top: 20px;
 }
 
 
@@ -32,6 +48,7 @@
     border: 1px solid #232323;
     border-radius: 5px;
     font-size: 20px;
+    margin-bottom: 10px; 
 }
 
 .boton-registro{
@@ -40,4 +57,5 @@
     color: #ff385c;
     font-size: 16px;
     padding-top: 15px;
+    
 }
