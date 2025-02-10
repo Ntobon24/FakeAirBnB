@@ -1,0 +1,39 @@
+.modal.d-block {
+    display: block !important;
+    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  }
+  
+.modal.d-none {
+    display: none;
+  }
+  
+
+.segundo-titulo-modal{
+    text-align: left;
+    padding: 15px;
+    font-weight: bold;
+}
+
+.btn-close {
+    position: absolute;
+    top: 20px;
+    left:  12px;
+    font-size: 10px;
+
+    }
+
+.modal-title{
+    text-align: center;
+    font-weight: bold;
+    font-size: 17px;
+    margin: 0 auto}
+
+.modal-content{
+    display: flex;
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 100px;
+    border-radius: 10px;
+    text-align: center;
+    padding: 8px;
+}

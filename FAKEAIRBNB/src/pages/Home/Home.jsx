@@ -21,6 +21,7 @@ const Home = () => {
     <div className="home-container">
       <MapWithMarkers propiedades={propiedades} />
       <PropertyList propiedades={propiedades} />
+    
     </div>
   );
 };

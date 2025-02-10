@@ -1,0 +1,43 @@
+.user-options {
+    font-size: 15px;
+    margin-right: 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: none;
+    border: none;
+  
+  }
+  .user-options:hover{
+    
+    background-color:#eaeaeab7;
+  
+  }
+
+.boton-enviar{
+    width: 100%;
+    padding: 10px;
+    background-color: #ff385c; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+
+
+.formu input {
+    width: 100%; 
+    padding: 10px;
+    border: 1px solid #232323;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+.boton-registro{
+    background :none;
+    border: none;   
+    color: #ff385c;
+    font-size: 16px;
+    padding-top: 15px;
+}
