@@ -6,7 +6,7 @@ function Modal({ show, onClose , children }) {
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h4 className="modal-title">Iniciar sesión </h4>
+            <h4 className="modal-title">Iniciar sesión o registrarse</h4>
             <button type="button" className="btn-close" onClick={onClose}>
                 
             </button>
