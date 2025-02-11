@@ -33,4 +33,4 @@ setPersistence(auth, browserLocalPersistence)
 
 export default app;
 
-export { db, collection, getDocs, addDoc };
+export { db, auth, collection, getDocs, addDoc };

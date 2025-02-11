@@ -1,5 +1,3 @@
-// src/firebase/firebaseFunctions.js
-
 import { db, collection, addDoc } from './firebaseConfig';
 
 // Función para agregar una propiedad a Firestore

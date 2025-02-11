@@ -36,7 +36,7 @@ const PropertyList = () => {
         <div
           key={propiedad.id}
           className="property-card"
-          onClick={() => navigate(`/propiedad/${propiedad.id}`)}
+          onClick={() => navigate(`/reserva/${propiedad.id}`)}
         >
           <h3>{propiedad.titulo}</h3>
           <p>{propiedad.descripcion}</p>
