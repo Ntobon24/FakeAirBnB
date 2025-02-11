@@ -3,28 +3,8 @@ import { db, collection, getDocs } from "../../firebase/firebaseConfig"; // Aseg
 import { useNavigate } from "react-router-dom";
 import "./PropertyList.css";
 
-const PropertyList = () => {
-  const [propiedades, setPropiedades] = useState([]);
+const PropertyList = ( {propiedades}) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Obtener las propiedades de Firebase
-    const fetchProperties = async () => {
-      try {
-        // Ahora 'collection' y 'getDocs' funcionan correctamente
-        const querySnapshot = await getDocs(collection(db, "propiedades"));
-        const propiedadesData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setPropiedades(propiedadesData);
-      } catch (error) {
-        console.error("Error al obtener propiedades:", error);
-      }
-    };
-
-    fetchProperties();
-  }, []);
 
   if (propiedades.length === 0) {
     return <p>Cargando propiedades...</p>;

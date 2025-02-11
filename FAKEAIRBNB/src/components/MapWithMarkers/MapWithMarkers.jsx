@@ -14,24 +14,11 @@ const center = {
   lng: -75.5812
 };
 
-const MapWithMarkers = () => {
+const MapWithMarkers = ( {propiedades} ) => {
   const [map, setMap] = useState(null);
-  const [propiedades, setPropiedades] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(db, "propiedades"));
-      const propiedadesArray = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setPropiedades(propiedadesArray);
-    };
-    
-    fetchData();
-  }, []);
-
+  
   const onLoad = mapInstance => {
     setMap(mapInstance);
   };
