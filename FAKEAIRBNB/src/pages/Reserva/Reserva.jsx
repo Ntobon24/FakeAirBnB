@@ -122,7 +122,7 @@ const Reserva = () => {
       <p>Total a pagar: ${totalPrecio.toFixed(2)}</p>
 
       {!user ? (
-        <button onClick={() => navigate("/login")}>Iniciar sesión para reservar</button>
+        <button onClick={() => navigate("/")}>Iniciar sesión para reservar</button>
       ) : (
         <button onClick={handleReserva} disabled={!startDate || !endDate}>Reservar</button>
       )}
