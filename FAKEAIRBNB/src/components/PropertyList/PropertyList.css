@@ -4,6 +4,7 @@
   gap: 20px;
   padding: 20px;
   justify-content: center;
+
 }
 
 .property-card {
@@ -12,8 +13,26 @@
   padding: 15px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
-  aspect-ratio: 1/1; /* Hace que sean cuadradas */
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 200px;
+  min-height: 170px;
+}
+
+.property-list h3{color: #000000;
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: left  ;
+  font-weight: bold;
+  padding-top: 10px;
+  
+}
+
+.property-list p {
+  color: #575555;
+    font-size: 12px;
+    margin-bottom: 5px;
+    text-align: left  ;
+    font-weight: bold;
 }

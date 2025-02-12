@@ -25,7 +25,9 @@ const Home = () => {
   return (
     <div className="home-container">
       <FilterBar propiedades={propiedades} onFilterChange={setPropiedadesFiltradas} />
+      <div className="mapa-inicio">
       <MapWithMarkers propiedades={propiedadesFiltradas} />
+      </div>
       <PropertyList propiedades={propiedadesFiltradas} />
     
     </div>

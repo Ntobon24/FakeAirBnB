@@ -1,37 +1,117 @@
 .reserva {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: 1fr 400px; 
+  gap: 20px;
+}
+
+.galeria-container {
+  grid-column: 1 / -1; /* Hace que la galería ocupe todas las columnas */
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.galeria-container img {
+  width: 100%;
+  height: 300px; 
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.contenido-principal {
+  grid-column: 1; /* Hace que el contenido principal ocupe la primera columna */
+}
   
   .reserva h2 {
-    color: #333;
-    font-size: 24px;
+    color: #000000;
+    font-size: 34px;
+    padding-left: 5px;
+    text-align: left  ;
+    margin-left: 2px;
+    font-weight: bold;
+
+ 
+  }
+  .reserva h3{
+    color: #353535;
+    font-size: 19px;
+    margin-bottom: 5px;
+    text-align: left  ;
+    margin-left: 2px;
+    padding: 2px;
+    font-weight: bold;
+    
+  }
+  .reserva h4{
+    color: #555555;
+    font-size: 14px;
     margin-bottom: 10px;
+    text-align: left  ;
+    margin-left: 4px;
+    font-weight: bold;
   }
-  
+
+
+  .reserva h5{
+    color: #000000;
+    font-size: 20px;
+    text-align: left  ;
+    font-weight: bold;
+  }
+
   .reserva p {
-    color: #555;
-    font-size: 18px;
-    margin: 10px 0;
+    color: #555555;
+    font-size: 14px;
+    margin-bottom: 20px;
   }
   
-  .reserva button {
-    background-color: #ff5a5f;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  .reserva label {
+    color: #555555;
+    font-size: 14px;
+    
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    
+ }
+
+ .cajita-separada-infocasa {
+  grid-column: 2; /* Hace que la cajita separada ocupe la segunda columna */
+  padding: 30px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #ffffff;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+  margin-right: 10px;
+
+}
+
+.btn-de-reserva {
+  width: 100%;
+  padding: 10px;
+  background-color: #ff385c; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
   }
   
-  .reserva button:hover {
-    background-color: #e0484d;
-  }
   
+.fechita{
+
+  margin-bottom : 20px;
+  border-radius: 5px;
+  font-size: 20px;
+  border-color: #ff385c;
+  outline: none;
+
+}

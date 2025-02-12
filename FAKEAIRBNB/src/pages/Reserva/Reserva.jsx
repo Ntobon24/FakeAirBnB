@@ -5,7 +5,14 @@ import { db, auth } from "../../firebase/firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+import Login from "../RegistroInicio/Login";
 import "./Reserva.css";
+import "../RegistroInicio/Login.css";
+import Galeria from "../../components/Gallery/Gallery";
+
+
+import PasarelaPagos from "../../components/PasarelaPagosFake/PasarelaPagosFake";
 
 const Reserva = () => {
   const { id } = useParams();
@@ -106,28 +113,48 @@ const Reserva = () => {
 
   return (
     <div className="reserva">
-      <h2>{propiedad.titulo}</h2>
-      <p>{propiedad.descripcion}</p>
-      <p>Precio por noche: ${propiedad.precio}</p>
-      <p>Ubicación: {propiedad.ubicacion}</p>
 
+
+      
+      <h2>{propiedad.titulo}</h2>
+
+      <div className="galeria-container">
+      <Galeria FotosPropiedad={propiedad.FotosPropiedad} />
+      </div>
+
+      
+      <div className="contenido-principal">
+      <h3>{propiedad.descripcion}</h3>
+      <h4>Ubicación: {propiedad.ubicacion}</h4>
+      <PasarelaPagos/>
+      </div>
+    
+
+
+      <div className="cajita-separada-infocasa">
+      <h5>${propiedad.precio} COP</h5>
+      <p>por noche</p>
+      
       <div className="datepicker-container">
         <label>Fecha de inicio:</label>
-        <DatePicker selected={startDate} onChange={date => setStartDate(date)} minDate={new Date()} />
+        <DatePicker className="fechita" selected={startDate} onChange={date => setStartDate(date)} minDate={new Date()} />
 
         <label>Fecha de fin:</label>
-        <DatePicker selected={endDate} onChange={date => setEndDate(date)} minDate={startDate} />
+        <DatePicker className="fechita"  selected={endDate} onChange={date => setEndDate(date)} minDate={startDate} />
       </div>
 
       <p>Total a pagar: ${totalPrecio.toFixed(2)}</p>
 
       {!user ? (
-        <button onClick={() => navigate("/")}>Iniciar sesión para reservar</button>
+       <Login/>
       ) : (
-        <button onClick={handleReserva} disabled={!startDate || !endDate}>Reservar</button>
+        <button className="btn-de-reserva" onClick={handleReserva} disabled={!startDate || !endDate}>Reservar</button>
       )}
 
       {mensaje && <p className="mensaje">{mensaje}</p>}
+
+
+      </div>
     </div>
   );
 };
