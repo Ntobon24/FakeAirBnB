@@ -1,29 +1,60 @@
+ import React, { useState } from "react";
  import "./Carrousel.css";
 
-const Carrousel = ({ FotosPropiedad }) => {
+
+const Carrousel = ({ FotosPropiedad, idPropiedad }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
     if(!FotosPropiedad || FotosPropiedad.lenth ===0){
         return <p>Fotos no disponibles</p>
     }
 
+    const nextImage = () => {
+        setCurrentIndex((prev) => ({
+          ...prev,
+          [idPropiedad]: (prev[idPropiedad] !== undefined ? prev[idPropiedad] + 1 : 1) % FotosPropiedad.length,
+        }));
+      };
+    
+      const prevImage = () => {
+        setCurrentIndex((prev) => ({
+          ...prev,
+          [idPropiedad]: (prev[idPropiedad] !== undefined ? prev[idPropiedad] - 1 + FotosPropiedad.length : FotosPropiedad.length - 1) % FotosPropiedad.length,
+        }));
+      };
+
 
   return (
 
-        <div id="carouselExample" className="carousel slide">
+        <div id={`carousel-${idPropiedad}`} className="carousel slide">
             <div className="carousel-inner">
                 {FotosPropiedad.map((img, index) => (
-                <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
+                <div key={index} className={`carousel-item ${index === (currentIndex[idPropiedad] || 0) ? "active" : ""}`}>
                     <img src={img} className="d-block w-100" alt={`Imagen ${index + 1}`} />
                 </div>
                 ))}
             </div>
 
-            {/* Botones de de para atras */}
-            <button className="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev"  onClick={(e) => e.stopPropagation()}>
+  
+            <button
+                className="carousel-control-prev"
+                type="button"
+                onClick={(e) => {
+                e.stopPropagation();
+                prevImage();
+                }}
+            >
                 <span className="carousel-control-prev-icon"></span>
             </button>
 
-            {/* Botones de de para adelante */}
-            <button className="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next" onClick={(e) => e.stopPropagation()}>
+
+            <button
+                className="carousel-control-next"
+                type="button"
+                onClick={(e) => {
+                e.stopPropagation();
+                nextImage();
+                }}
+            >
                 <span className="carousel-control-next-icon"></span>
             </button>
         </div>

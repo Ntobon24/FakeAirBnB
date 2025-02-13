@@ -7,10 +7,6 @@ import Carrousel from "../Gallery/Carrousel";
 const PropertyList = ( {propiedades}) => {
   const navigate = useNavigate();
 
-  if (propiedades.length === 0) {
-    return <p>Cargando propiedades...</p>;
-  }
-
   return (
     <div className="property-list">
       {propiedades.map((propiedad) => (
@@ -20,7 +16,7 @@ const PropertyList = ( {propiedades}) => {
           onClick={() => navigate(`/reserva/${propiedad.id}`)}
         >
           
-          <Carrousel FotosPropiedad={propiedad.FotosPropiedad} />
+          <Carrousel FotosPropiedad={propiedad.FotosPropiedad} idPropiedad={propiedad.id} />
           <h3>{propiedad.titulo}</h3>
           <p>{propiedad.descripcion}</p>
           <p>
