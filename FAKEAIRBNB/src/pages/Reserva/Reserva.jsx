@@ -19,7 +19,8 @@ const Reserva = () => {
   const [endDate, setEndDate] = useState(null);
   const [totalPrecio, setTotalPrecio] = useState(0);
   const [mensaje, setMensaje] = useState("");
-  const [fechasReservadas, setFechasReservadas] = useState([]);
+
+  const [showPasarela, setShowPasarela] = useState(false);
 
   useEffect(() => {
     const fetchPropiedad = async () => {
@@ -74,6 +75,7 @@ const Reserva = () => {
     }
   }, [startDate, endDate, propiedad]);
 
+
   const verificarDisponibilidad = async () => {
     for (const fecha of fechasReservadas) {
       if (startDate <= fecha && endDate >= fecha) {
@@ -98,7 +100,11 @@ const Reserva = () => {
       setMensaje("Lo sentimos, estas fechas ya están reservadas.");
       return;
     }
+    setShowPasarela(true);};
 
+
+
+    const confirmarPago = async () => {
     try {
       await addDoc(collection(db, "reservas"), {
         propiedadId: propiedad.id,
@@ -111,8 +117,9 @@ const Reserva = () => {
         usuarioId: user.uid,
         usuarioEmail: user.email,
       });
-
+      setShowPasarela(false);
       setMensaje("Reserva confirmada. ¡Gracias por reservar!");
+      
     } catch (error) {
       console.error("Error al reservar:", error);
       setMensaje("Hubo un error al procesar la reserva.");
@@ -123,6 +130,9 @@ const Reserva = () => {
 
   return (
     <div className="reserva">
+
+
+      
       <h2>{propiedad.titulo}</h2>
 
       <div className="galeria-container">
@@ -196,7 +206,12 @@ const Reserva = () => {
           </button>
         )}
 
-        {mensaje && <p className="mensaje">{mensaje}</p>}
+      {mensaje && <p className="mensaje">{mensaje}</p>}
+      {showPasarela && (
+      <PasarelaPagos onClose={() => setShowPasarela(false)} onConfirm={confirmarPago} />
+    )}
+
+
       </div>
     </div>
   );
