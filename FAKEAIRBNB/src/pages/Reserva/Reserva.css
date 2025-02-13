@@ -5,82 +5,78 @@
   background-color: #ffffff;
   border-radius: 10px;
   display: grid;
-  grid-template-columns: 1fr 400px; 
+  grid-template-columns: 1fr 400px;
   gap: 20px;
 }
 
 .galeria-container {
-  grid-column: 1 / -1; /* Hace que la galería ocupe todas las columnas */
+  grid-column: 1 / -1; 
   width: 100%;
   margin-bottom: 20px;
 }
 
 .galeria-container img {
   width: 100%;
-  height: 300px; 
+  height: 300px;
   object-fit: cover;
   border-radius: 8px;
 }
 
 .contenido-principal {
-  grid-column: 1; /* Hace que el contenido principal ocupe la primera columna */
+  grid-column: 1; 
 }
-  
-  .reserva h2 {
-    color: #000000;
-    font-size: 34px;
-    padding-left: 5px;
-    text-align: left  ;
-    margin-left: 2px;
-    font-weight: bold;
 
- 
-  }
-  .reserva h3{
-    color: #353535;
-    font-size: 19px;
-    margin-bottom: 5px;
-    text-align: left  ;
-    margin-left: 2px;
-    padding: 2px;
-    font-weight: bold;
-    
-  }
-  .reserva h4{
-    color: #555555;
-    font-size: 14px;
-    margin-bottom: 10px;
-    text-align: left  ;
-    margin-left: 4px;
-    font-weight: bold;
-  }
+.reserva h2 {
+  color: #000000;
+  font-size: 34px;
+  padding-left: 5px;
+  text-align: left;
+  margin-left: 2px;
+  font-weight: bold;
+}
 
+.reserva h3 {
+  color: #353535;
+  font-size: 19px;
+  margin-bottom: 5px;
+  text-align: left;
+  margin-left: 2px;
+  padding: 2px;
+  font-weight: bold;
+}
 
-  .reserva h5{
-    color: #000000;
-    font-size: 20px;
-    text-align: left  ;
-    font-weight: bold;
-  }
+.reserva h4 {
+  color: #555555;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: left;
+  margin-left: 4px;
+  font-weight: bold;
+}
 
-  .reserva p {
-    color: #555555;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-  
-  .reserva label {
-    color: #555555;
-    font-size: 14px;
-    
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-    
- }
+.reserva h5 {
+  color: #000000;
+  font-size: 20px;
+  text-align: left;
+  font-weight: bold;
+}
 
- .cajita-separada-infocasa {
-  grid-column: 2; /* Hace que la cajita separada ocupe la segunda columna */
+.reserva p {
+  color: #555555;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.reserva label {
+  color: #555555;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.cajita-separada-infocasa {
+  grid-column: 2; 
   padding: 30px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   border: 1px solid #ddd;
@@ -90,28 +86,52 @@
   position: sticky;
   top: 20px;
   margin-right: 10px;
-
 }
 
 .btn-de-reserva {
   width: 100%;
   padding: 10px;
-  background-color: #ff385c; 
+  background-color: #ff385c;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   margin-top: 20px;
-  }
-  
-  
-.fechita{
+}
 
-  margin-bottom : 20px;
+.fechita {
+  margin-bottom: 20px;
   border-radius: 5px;
   font-size: 20px;
   border-color: #ff385c;
   outline: none;
+}
 
+.react-datepicker__day--reserved {
+  text-decoration: line-through;
+  background-color: #f8d7da;
+  color: #721c24;
+  pointer-events: none;
+}
+
+.propiedad-detalles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.propiedad-detalles p {
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.propiedad-detalles span {
+  font-weight: normal;
+  color: #666;
 }

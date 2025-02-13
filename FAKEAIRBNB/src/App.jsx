@@ -5,6 +5,7 @@ import PropertyList from "./components/PropertyList/PropertyList";
 import Reserva from "./pages/Reserva/Reserva";
 import MapWithMarkers from "./components/MapWithMarkers/MapWithMarkers";
 import AddPropertiesOnce from "./pages/AddPropertiesOnce/AddPropertiesOnce";
+import HistorialReservas from "./pages/HistorialReservas/HistorialReservas";
 import Header from "./components/Estructure/Header";
 import "./App.css";
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/reserva/:id" element={<Reserva />} />
           <Route path="/mapa" element={<MapWithMarkers />} />
           <Route path="/add-properties" element={<AddPropertiesOnce />}/>
+          <Route path="/historial-reservas" element={<HistorialReservas />} />
           
         </Routes>
         </main>
