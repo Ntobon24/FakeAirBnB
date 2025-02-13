@@ -105,7 +105,7 @@ const Reserva = () => {
 
   const confirmarPago = async () => {
     try {
-      await addDoc(collection(db, "reservas"), {
+      const nuevaReserva = {
         propiedadId: propiedad.id,
         titulo: propiedad.titulo,
         ubicacion: propiedad.ubicacion,
@@ -115,11 +115,31 @@ const Reserva = () => {
         totalPrecio,
         usuarioId: user.uid,
         usuarioEmail: user.email,
-      });
+      };
+
+      await addDoc(collection(db, "reservas"), nuevaReserva);
+
+      // Actualizar fechas reservadas 
+      let nuevasFechas = [];
+      let inicio = new Date(startDate);
+      let fin = new Date(endDate)
+
+      while (inicio <= fin) {
+        nuevasFechas.push(new Date(inicio));
+        inicio.setDate(inicio.getDate() + 1);
+      }
+
+      // Actualizar el estado de fechas reservadas con las nuevas fechas  
+      setFechasReservadas([...fechasReservadas, ...nuevasFechas]);
+
 
       setShowPasarela(false);
       setMensaje("Reserva confirmada. ¡Gracias por reservar!");
-      
+
+        // Limpiar las fechas seleccionadas
+      setStartDate(null);
+      setEndDate(null);
+        
     } catch (error) {
       console.error("Error al reservar:", error);
       setMensaje("Hubo un error al procesar la reserva.");

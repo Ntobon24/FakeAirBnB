@@ -1,11 +1,18 @@
 .user-options,
-.cerrar-sesion {
+.cerrar-sesion,
+.ver-reservas {
     font-size: 15px;
-    margin-right: 20px;
     padding: 8px 16px;
     border-radius: 20px;
     background: none;
     border: none;
+}
+
+
+.ver-reservas,
+.cerrar-sesion {
+    min-width: 150px;
+    text-align: center;
 }
 
 .user-options:hover {
@@ -20,33 +27,21 @@
 .titulo-bienvenida {
     font-size: 15px;
     color: #000000;
-    padding-top: 6px;
+    margin: 0;
+    padding: 6px 0;
 }
 
 .bienvenida {
     display: flex;
-    align-items: center; /* Alinear el texto y botones en línea */
-    gap: 15px;
+    align-items: center; 
+    gap: 20px;
+    justify-content: space-between;
 }
 
-/* Estilos del botón Ver Mis Reservas */
-.ver-reservas {
-    font-size: 15px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
+
 
 .ver-reservas:hover {
-    background-color: #0056b3;
-}
-
-.ver-reservas:active {
-    background-color: #003f7f;
+    background-color:#eaeaeab7;
 }
 
 .boton-enviar {
