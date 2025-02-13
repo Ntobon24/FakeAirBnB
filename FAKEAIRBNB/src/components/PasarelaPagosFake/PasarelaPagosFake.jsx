@@ -1,32 +1,20 @@
-import { useState } from "react";
-
-const PasarelaPagos = () => {
-    const [showModalPagos, setShowModalPagos] = useState(false);
+import "./PasarelaPagosFake.css";
+const PasarelaPagos = ( {onClose, onConfirm}) => {
 
 
     return (
         <div>
-      
-        <button className="btn btn-primary" onClick={() => setShowModalPagos(true)}>
-          Confirmar Pago
-        </button>
-  
-
-
-        {showModalPagos && (
+        
           <div className="modal show d-block" tabIndex="-1" role="dialog">
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
                   <h4 className="modal-title">Pagos Seguros </h4>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setShow(false)}
-                  ></button>
+                  
                 </div>
                 <div className="modal-body">
-                  <h5>Tarjeta de credito o debito</h5>
+                <h2>Tarjeta de credito o debito</h2>
+                  <p>Ingresa los datos de tu tarjeta</p>
                   <form className="formu-pagos">
                     <input type="text" placeholder="Nombre del titular" />
                     <input type="text" placeholder="Número de tarjeta" />
@@ -36,19 +24,21 @@ const PasarelaPagos = () => {
                   </form>
                 </div>
                 <div className="modal-footer">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => setShowModalPagos(false)}
-                  >
-                    Cerrar
+
+                  {/* Estos son los botones que si confirma llama a la funcion pagar y si no pues no hace nada */}
+                  <button className="btn-pasarela-cancelar" onClick={onClose}>
+                    Cancelar Compra
+                  </button>
+
+                  <button className="btn-pasarela-pagos" onClick={onConfirm}>
+                    Confirmar Pago
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        )}
+      
   
-        {showModalPagos && <div className="modal-backdrop fade show"></div>}
       </div>
     );
   };
