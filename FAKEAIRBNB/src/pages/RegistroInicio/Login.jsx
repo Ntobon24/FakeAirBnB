@@ -35,11 +35,11 @@ const Login = () => {
       {usuario ? (
         <div className="bienvenida">
           <h5 className="titulo-bienvenida">Bienvenido, {usuario?.email}</h5>
-          <button className="cerrar-sesion" onClick={logout}>
-            Cerrar Sesión
-          </button>
           <button className="ver-reservas" onClick={() => navigate("/historial-reservas")}>
             Ver mis reservas
+          </button>
+          <button className="cerrar-sesion" onClick={logout}>
+            Cerrar Sesión
           </button>
         </div>
       ) : (

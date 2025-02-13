@@ -111,13 +111,6 @@
   outline: none;
 }
 
-.react-datepicker__day--reserved {
-  text-decoration: line-through;
-  background-color: #f8d7da;
-  color: #721c24;
-  pointer-events: none;
-}
-
 .propiedad-detalles {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -137,4 +130,98 @@
 .propiedad-detalles span {
   font-weight: normal;
   color: #666;
+}
+
+.react-datepicker {
+  font-family: 'Arial', sans-serif;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  background-color: #ffffff;
+  padding: 10px;
+  width: 100%;
+  max-width: 350px; 
+}
+
+.react-datepicker__header {
+  background-color: #ff385c;
+  color: white;
+  border-radius: 8px 8px 0 0;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.react-datepicker__current-month {
+  font-size: 14px !important;
+  font-weight: bold;
+  color: white;
+}
+
+.react-datepicker__navigation {
+  top: 10px;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: white !important;
+}
+
+.react-datepicker__month {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 10px;
+}
+
+.react-datepicker__week {
+  display: flex;
+  justify-content: center;
+}
+
+.react-datepicker__day {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border-radius: 50%;
+  margin: 2px;
+  transition: background 0.3s ease;
+}
+
+.react-datepicker__day--reserved {
+  text-decoration: line-through;
+  background-color: #f8d7da;
+  color: #721c24;
+  pointer-events: none;
+  border-radius: 50%;
+  padding: 5px;
+  font-weight: bold;
+}
+
+.react-datepicker__day--selected {
+  background-color: #ff385c !important;
+  color: white !important;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.react-datepicker__day:hover {
+  background-color: #ff758c;
+  color: white;
+  border-radius: 50%;
+}
+
+.react-datepicker__day--disabled {
+  color: #ccc !important;
+  text-decoration: line-through;
+}
+
+.react-datepicker__day--weekend {
+  color: #d9534f;
+}
+
+.react-datepicker__month-container {
+  border-radius: 0 0 8px 8px;
 }
