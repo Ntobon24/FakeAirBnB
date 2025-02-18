@@ -1,0 +1,63 @@
+
+.formu-rating {
+    width: 100%; 
+    gap: 50px;
+    padding: 10px;
+}
+
+.contenedor-imagen-propiedad {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.imagen-propiedad {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.contenedor-puntaje {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+/*Datos para calificar*/
+.contenedor-estrellas-puntaje{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+  
+.estrella {
+    font-size: 35px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: gray;
+    transition: color 0.3s;
+}
+
+.estrella.seleccionada {
+    color: #ff385c;
+}
+
+.comentario-input {
+    width: 100%; /* Ajusta el ancho al 100% del contenedor */
+    min-height: 100px; /* Altura mínima */
+    border: 1px solid #ccc; /* Borde gris */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 10px; /* Espaciado interno */
+    font-size: 14px; /* Tamaño de fuente */
+    background-color: #f9f9f9; /* Color de fondo suave */
+}
+
+.comentario-input:focus {
+    outline: none;
+    border-color: #ff385c;
+}

@@ -43,14 +43,4 @@ const PasarelaPagos = ( {onClose, onConfirm}) => {
     );
   };
   
-     
-
-
-
-
-
-
-
-
-
 export default PasarelaPagos;

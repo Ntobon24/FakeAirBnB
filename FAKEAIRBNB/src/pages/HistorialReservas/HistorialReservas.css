@@ -69,4 +69,40 @@
     font-size: 16px;
     margin-top: 10px;
   }
+
+  .reserva-item .reserva-activa{
+    font-size: 14px !important;
+    color: green !important;
+    font-weight: bold;
+  }
+
+  .reserva-item .reserva-finalizada{
+    color: red;
+    font-weight: bold;
+  }
+
+  .mensaje-calificacion{
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .btn-calificar {
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: #ff385c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .btn-calificar:hover {
+    background-color: #e31c5f;
+  }
+  
   

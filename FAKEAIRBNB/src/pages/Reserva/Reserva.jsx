@@ -10,6 +10,7 @@ import Login from "../RegistroInicio/Login";
 import "./Reserva.css";
 import Galeria from "../../components/Gallery/Gallery";
 import PasarelaPagos from "../../components/PasarelaPagosFake/PasarelaPagosFake";
+import CommentsList from "../../components/CommentsList/CommentsList";
 
 const Reserva = () => {
   const { id } = useParams();
@@ -226,6 +227,10 @@ const Reserva = () => {
           <PasarelaPagos onClose={() => setShowPasarela(false)} onConfirm={confirmarPago} />
         )}
       </div>
+      <div className="comments-list-container">
+        <CommentsList propiedadId={propiedad.id}/>
+      </div>
+    
     </div>
   );
 };

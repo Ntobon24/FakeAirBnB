@@ -1,0 +1,43 @@
+.comment-card-container {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 16px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-info {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555555;
+}
+
+.comment-date-info {
+  display: flex; 
+  justify-content: left;
+  align-items: center;
+  margin-bottom: 5px;
+  gap: 20px;
+}
+
+.comment-date-info p {
+  margin: 0;
+  margin-top: 3px; 
+}
+
+.estrella.seleccionada-card {
+    color: #ff385c;
+    font-size: 16px;
+}
+
+.estrella.card {
+    font-size: 16px;
+}
