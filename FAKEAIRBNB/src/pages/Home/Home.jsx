@@ -83,6 +83,7 @@ const Home = () => {
 
       return coincideLocacion && !estaReservada;
 
+      
     });
 
     setPropiedadesFiltradas(propiedadesDisponibles);
@@ -94,12 +95,10 @@ const Home = () => {
     setFilterData(datosFiltro);
     const propiedadesDisponiblesFiltradas = propiedadesFiltradasBase.filter((propiedad) => {
 
-      console.log("Propiedades antes del filtro:", propiedadesFiltradasBase);
-      console.log("Filtro aplicado:", datosFiltro);
       const cumpleHuespedes = propiedad.maxPersonas >= datosFiltro.guests;
       const cumpleHabitaciones = propiedad.habitaciones >= datosFiltro.rooms;
       const cumpleBanos = propiedad.banos >= datosFiltro.bathrooms;
-      const cumplePrecio = propiedad.precio <= datosFiltro.price;
+      const cumplePrecio = propiedad.precio <= datosFiltro.maxPrice;
       const cumpleMascotas = datosFiltro.pets ? propiedad.mascotasPermitidas === true : true;
       const cumplePiscina = datosFiltro.pool ? propiedad.piscina === true : true;
       const cumpleWifi = datosFiltro.wifi ? propiedad.wifi === true : true;

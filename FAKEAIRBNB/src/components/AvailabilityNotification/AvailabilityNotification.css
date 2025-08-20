@@ -1,0 +1,161 @@
+.notification-container {
+  position: relative;
+}
+
+.notification-button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+.notification-button:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.notification-button.subscribed {
+  background: #dc3545;
+}
+
+.notification-button.subscribed:hover {
+  background: #c82333;
+}
+
+.notification-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.notification-button i {
+  font-size: 14px;
+}
+
+.date-picker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.date-picker-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+}
+
+.date-picker-content h4 {
+  margin: 0 0 20px 0;
+  color: #333;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.date-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.date-input {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.date-input label {
+  font-weight: 500;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.date-input input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.date-input input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+}
+
+.date-picker-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background: #5a6268;
+}
+
+.btn-subscribe {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.btn-subscribe:hover:not(:disabled) {
+  background: #218838;
+}
+
+.btn-subscribe:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .date-picker-content {
+    margin: 20px;
+    padding: 20px;
+  }
+  
+  .date-picker-actions {
+    flex-direction: column;
+  }
+  
+  .btn-cancel,
+  .btn-subscribe {
+    width: 100%;
+  }
+}

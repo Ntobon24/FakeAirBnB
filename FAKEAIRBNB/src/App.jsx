@@ -6,6 +6,8 @@ import Reserva from "./pages/Reserva/Reserva";
 import MapWithMarkers from "./components/MapWithMarkers/MapWithMarkers";
 import AddPropertiesOnce from "./pages/AddPropertiesOnce/AddPropertiesOnce";
 import HistorialReservas from "./pages/HistorialReservas/HistorialReservas";
+import Favoritos from "./pages/Favoritos/Favoritos";
+import Notificaciones from "./pages/Notificaciones/Notificaciones";
 import Header from "./components/Estructure/Header";
 import UpdatePropertyImages from "./pages/UpdatePropertyImages/UpdatePropertyImages";
 import "./App.css";
@@ -26,6 +28,8 @@ function App() {
           <Route path="/mapa" element={<MapWithMarkers />} />
           <Route path="/add-properties" element={<AddPropertiesOnce />}/>
           <Route path="/historial-reservas" element={<HistorialReservas />} />
+          <Route path="/favoritos" element={<Favoritos />} />
+          <Route path="/notificaciones" element={<Notificaciones />} />
           <Route path="/update-property-images" element={<UpdatePropertyImages/>}/>
           
         </Routes>

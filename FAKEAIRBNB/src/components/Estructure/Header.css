@@ -8,15 +8,46 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
 .logo {
   font-size: 24px;
   font-weight: bold;
-  color: red;
+  color: #ff385c;
   margin-right: 20px;
   text-decoration: none; 
   font-weight: bold; 
-  
+  transition: color 0.3s ease;
+}
+
+.logo:hover {
+  color: #e31c5f;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: #f8f9fa;
+  color: #ff385c;
+}
+
+.nav-link i {
+  color: #ff385c;
 }
 
 

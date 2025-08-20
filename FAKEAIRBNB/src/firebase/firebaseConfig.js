@@ -16,9 +16,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-
-// Configuración de persistencia en el navegador para la autenticación de usuarios con Firebase 
 const auth = getAuth(app);
 
 
