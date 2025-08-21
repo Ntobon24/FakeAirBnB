@@ -9,10 +9,10 @@ const UpdatePropertyImages = () => {
     const updatedImagesProperties = {
       //Titulo: Cabaña rústica en Santa Elena
       "STMWle3t47g878QP7VTF": [
-        "https://a0.muscache.com/im/pictures/a523861e-b707-4e28-adaa-655703eb746f.jpg?im_w=720&im_format=avif",
-        "https://a0.muscache.com/im/pictures/miso/Hosting-53638277/original/13ab95ce-f447-4163-9976-6b5f4e2e80bb.jpeg?im_w=1200&im_format=avif",
-        "https://a0.muscache.com/im/pictures/miso/Hosting-53638277/original/8a84db08-6c59-4285-b145-e7f0cee444f3.jpeg?im_w=720&im_format=avif",
-        "https://a0.muscache.com/im/pictures/miso/Hosting-53638277/original/dceead18-d2a0-487c-aa91-42391bd65ca2.jpeg?im_w=1200&im_format=avif"
+        "https://a0.muscache.com/im/pictures/hosting/Hosting-1489407757885907396/original/5634e410-234e-4920-89a5-a7ae690c0812.jpeg?im_w=960",
+        "https://a0.muscache.com/im/pictures/hosting/Hosting-1489407757885907396/original/54461860-00bc-48f8-93a8-75d8c409ec36.jpeg?im_w=1200",
+        "https://a0.muscache.com/im/pictures/hosting/Hosting-1489407757885907396/original/85246f20-298c-44ab-97c6-4808d460fe70.jpeg?im_w=1200",
+        "https://a0.muscache.com/im/pictures/hosting/Hosting-1489407757885907396/original/36f833cf-8a1b-4bf0-9135-e69c701fd6e9.jpeg?im_w=720"
 
       ],
       

@@ -16,7 +16,7 @@ const FilterBar = ({onFilterChange }) => {
   const pointerPosition = (price / maxPrice) * 100;
 
   const handleFilterChange = () => {   
-    onFilterChange({guests: guests, rooms: rooms, bathrooms: bathrooms, price: price, pets: pets, pool: pool, wifi: wifi });
+    onFilterChange({guests: guests, rooms: rooms, bathrooms: bathrooms, maxPrice: price, pets: pets, pool: pool, wifi: wifi });
   };
 
   return (
