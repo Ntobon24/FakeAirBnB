@@ -86,6 +86,8 @@ const Reserva = () => {
   };
 
   const handleReserva = async () => {
+
+
     if (!user) {
       setMensaje("Debes iniciar sesión para reservar.");
       return;
@@ -105,6 +107,10 @@ const Reserva = () => {
   };
 
   const confirmarPago = async () => {
+
+    // Guardar tiempo de inicio
+    const startTime = performance.now();
+
     try {
       const nuevaReserva = {
         propiedadId: propiedad.id,
@@ -137,9 +143,16 @@ const Reserva = () => {
       setShowPasarela(false);
       setMensaje("Reserva confirmada. ¡Gracias por reservar!");
 
-        // Limpiar las fechas seleccionadas
+      // Limpiar las fechas seleccionadas
       setStartDate(null);
       setEndDate(null);
+
+      const end = performance.now(); // Marca de fin
+      const latency = end - startTime;
+
+      console.log(`Tiempo confirmacion de reserva: ${latency.toFixed(2)} ms`);
+
+
         
     } catch (error) {
       console.error("Error al reservar:", error);

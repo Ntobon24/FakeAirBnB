@@ -27,6 +27,7 @@ const Home = () => {
       setPropiedades(propiedadesArray);
       setPropiedadesFiltradas(propiedadesArray);
       setPropiedadesFiltradasBase(propiedadesArray);
+      
       } catch (error) {
         console.error("Error obteniendo propiedades de firebase:", error);
       } finally {
@@ -42,9 +43,11 @@ const Home = () => {
     try{
       const reservasRef = collection(db, "reservas"); 
       const querySnapshot = await getDocs(reservasRef);
-      const reservas = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));    
-      console.log("reservas obtenidas: ",reservas)
+      const reservas = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
+
       return reservas;
+
+    
     }
     catch(error){
       console.error("Error obteniendo todas las reservas")
@@ -65,7 +68,7 @@ const Home = () => {
 
     const reservas = await obtenerReservas();
 
-    const propiedadesDisponibles = propiedades.filter((propiedad) => {
+    const propiedadesDisponibles = propiedadesFiltradasBase.filter((propiedad) => {
 
       const estaReservada = reservas.some((reserva) => {
         const reservaFechaInicio = new Date(reserva.fechaInicio);
@@ -79,11 +82,10 @@ const Home = () => {
       });
 
       const coincideLocacion = (datosBusqueda.location === "" || 
-        (removeAccents(propiedad.ubicacion)).toLowerCase().includes((removeAccents(datosBusqueda.location)).toLowerCase()));
+        (removeAccents(propiedad.ubicacion)).toLowerCase().includes((removeAccents(datosBusqueda.location))
+          .toLowerCase()));
 
-      return coincideLocacion && !estaReservada;
-
-      
+      return coincideLocacion && !estaReservada;    
     });
 
     setPropiedadesFiltradas(propiedadesDisponibles);
@@ -92,8 +94,10 @@ const Home = () => {
 
   const handleFilter = (datosFiltro) => {
 
+    console.log("datos de filtro:", datosFiltro);
+
     setFilterData(datosFiltro);
-    const propiedadesDisponiblesFiltradas = propiedadesFiltradasBase.filter((propiedad) => {
+    const propiedadesDisponiblesFiltradas = propiedades.filter((propiedad) => {
 
       const cumpleHuespedes = propiedad.maxPersonas >= datosFiltro.guests;
       const cumpleHabitaciones = propiedad.habitaciones >= datosFiltro.rooms;
@@ -103,10 +107,13 @@ const Home = () => {
       const cumplePiscina = datosFiltro.pool ? propiedad.piscina === true : true;
       const cumpleWifi = datosFiltro.wifi ? propiedad.wifi === true : true;
   
-      return cumpleHuespedes && cumpleHabitaciones && cumpleBanos && cumplePrecio && cumpleMascotas && cumplePiscina && cumpleWifi;
+      return cumpleHuespedes && cumpleHabitaciones && cumpleBanos && cumplePrecio &&
+             cumpleMascotas && cumplePiscina && cumpleWifi;
     });;
 
+
     setPropiedadesFiltradas(propiedadesDisponiblesFiltradas);
+    console.log("Propiedades filtradas:", propiedadesFiltradas);
   };
 
 

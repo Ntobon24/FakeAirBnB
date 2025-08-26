@@ -21,10 +21,20 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    // Guardar tiempo de inicio
+    const startTime = performance.now();
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setShowModalLogin(false);
       console.log("Usuario logueado:", usuario?.email);
+
+      const end = performance.now(); // Marca de fin
+      const latency = end - startTime;
+
+      console.log(`Tiempo de autenticación: ${latency.toFixed(2)} ms`);
+
     } catch (error) {
       setError(error.message);
     }
