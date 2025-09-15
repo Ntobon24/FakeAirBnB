@@ -1,3 +1,7 @@
+#Archivo configuracion sonarqube local
+sonar-project.properties
+
+
 #Environment variables
 .env
 

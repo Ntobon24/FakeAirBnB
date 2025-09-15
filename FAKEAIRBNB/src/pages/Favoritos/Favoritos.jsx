@@ -11,6 +11,7 @@ const Favoritos = () => {
   const navigate = useNavigate();
   const [favoritos, setFavoritos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!usuario) {
@@ -37,6 +38,7 @@ const Favoritos = () => {
       setFavoritos(favoritosData);
     } catch (error) {
       console.error("Error obteniendo favoritos:", error);
+      setError("Error obteniendo favoritos");
     } finally {
       setLoading(false);
     }
@@ -67,8 +69,12 @@ const Favoritos = () => {
   return (
     <div className="favoritos-container">
       <h2>Mis Favoritos</h2>
-      
-      {favoritos.length === 0 ? (
+      {loading ? (
+        <p>Cargando favoritos...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : 
+        favoritos.length === 0 ? (
         <div className="no-favoritos">
           <i className="far fa-heart"></i>
           <h3>No tienes favoritos aún</h3>

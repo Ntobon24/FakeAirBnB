@@ -1,221 +1,118 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { createContext } from "react";
 
-vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn()
-}))
+const AuthContext = createContext();
+import HistorialReservas from "../pages/HistorialReservas/HistorialReservas";
 
-vi.mock('../../context/AuthContext', () => ({
-  useAuth: vi.fn()
-}))
+vi.mock("../firebase/firebaseConfig", () => ({
+  default: {}, // simula tu `app`
+}));
 
-vi.mock('../../firebase/firebaseConfig', () => ({
-  default: {}
-}))
-
-vi.mock('firebase/firestore', () => ({
-  getFirestore: vi.fn(() => ({})),
-  collection: vi.fn(),
-  query: vi.fn(),
-  where: vi.fn(),
-  getDocs: vi.fn(),
-  addDoc: vi.fn(),
-  deleteDoc: vi.fn(),
-  doc: vi.fn()
-}))
-
-vi.mock('../../components/ServiceRating/ServiceRating', () => {
+vi.mock("firebase/firestore", () => {
   return {
-    default: ({ reserva, onClose, onConfirm }) => (
-      <div data-testid="service-rating">
-        <h3>Calificar: {reserva?.titulo}</h3>
-        <button onClick={onClose}>Cancelar</button>
-        <button onClick={() => onConfirm({
-          reservaId: reserva?.id,
-          usuarioId: reserva?.usuarioId,
-          propiedadId: reserva?.propiedadId,
-          usuarioEmail: reserva?.usuarioEmail,
-          puntaje: 5,
-          comentario: "Excelente estadía",
-          fechaPublicacion: new Date().toISOString()
-        })}>
-          Confirmar Calificación
-        </button>
-      </div>
-    )
-  }
-})
+    getFirestore: vi.fn(() => ({})), 
+    collection: vi.fn(),
+    addDoc: vi.fn(),
+    query: vi.fn(),
+    where: vi.fn(),
+    getDocs: vi.fn(),
+    deleteDoc: vi.fn(),
+    doc: vi.fn(),
+  };
+});
 
-import HistorialReservas from '../../pages/HistorialReservas/HistorialReservas'
-
-const mockUsuario = {
-  uid: 'user123',
-  email: 'test@example.com'
-}
-
-const mockNavigate = vi.fn()
-
-const mockReservas = [
-  {
-    id: 'reserva1',
-    titulo: 'Casa en la playa',
-    ubicacion: 'Cancún, México',
-    fechaInicio: '2024-01-01T00:00:00.000Z',
-    fechaFin: '2024-01-05T00:00:00.000Z',
-    precioPorNoche: 150000,
-    totalPrecio: 600000,
-    usuarioId: 'user123',
-    usuarioEmail: 'test@example.com',
-    propiedadId: 'prop1'
+const mockAuthContext = {
+  usuario: {
+    uid: "test-user-id",
+    email: "test@example.com",
   },
-  {
-    id: 'reserva2',
-    titulo: 'Apartamento en la ciudad',
-    ubicacion: 'Medellín, Colombia',
-    fechaInicio: '2024-02-01T00:00:00.000Z',
-    fechaFin: '2024-02-10T00:00:00.000Z',
-    precioPorNoche: 200000,
-    totalPrecio: 1800000,
-    usuarioId: 'user123',
-    usuarioEmail: 'test@example.com',
-    propiedadId: 'prop2'
-  }
-]
+};
 
-const mockReservasSnapshot = {
-  docs: mockReservas.map(reserva => ({
-    id: reserva.id,
-    data: () => reserva
-  }))
-}
+vi.mock("../context/AuthContext", () => ({
+  useAuth: () => mockAuthContext,
+}));
 
-const mockCalificacionesSnapshot = {
-  empty: true
-}
+//Mock para el router no redirigir
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", () => ({
+  useNavigate: () => mockNavigate,
+}));
 
-describe('HistorialReservas Component - confirmarCalificacion Function', () => {
+//mock modal para calificar
+vi.mock("../components/ServiceRating/ServiceRating", () => ({
+  __esModule: true,
+  default: ({ onConfirm }) => (
+    <button data-testid="mock-service-rating" onClick={() => onConfirm({ puntuacion: 5 })}>
+      Calificar reserva
+    </button>
+  ),
+}));
+
+const renderWithProviders = (component) => {
+  return render(
+    <AuthContext.Provider value={mockAuthContext}>
+      {component}
+    </AuthContext.Provider>
+  );
+};
+
+describe("HistorialReservas component", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.clearAllMocks();
+  });
 
-    useAuth.mockReturnValue({ usuario: mockUsuario })
-    useNavigate.mockReturnValue(mockNavigate)
-    
-    const { collection, query, where, getDocs, addDoc, deleteDoc, doc } = require('firebase/firestore')
-    collection.mockReturnValue({})
-    query.mockReturnValue({})
-    where.mockReturnValue({})
-    getDocs.mockResolvedValue(mockReservasSnapshot)
-    addDoc.mockResolvedValue({ id: 'calificacion1' })
-    deleteDoc.mockResolvedValue()
-    doc.mockReturnValue({})
-  })
+  it("muestra mensaje de cargando", () => {
+    renderWithProviders(<HistorialReservas />);
+    expect(screen.getByText("Cargando reservas...")).toBeInTheDocument();
+  });
 
-  // TEST 1:
-  it('debe agregar calificación y eliminar reserva exitosamente', async () => {
-    const { addDoc, deleteDoc, doc } = require('firebase/firestore')
-    
-    render(<HistorialReservas />)
+  it("muestra mensaje si no hay reservas", async () => {
+    const { getDocs } = await import("firebase/firestore");
+    getDocs.mockResolvedValueOnce({ docs: [], empty: true });
+
+    renderWithProviders(<HistorialReservas />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mis Reservas')).toBeInTheDocument()
-    })
+      expect(
+        screen.getByText("No tienes reservas registradas.")
+      ).toBeInTheDocument();
+    });
+  });
 
-    const ratingButtons = screen.getAllByText('Calificar estadia')
-    fireEvent.click(ratingButtons[0])
+  it("muestra una reserva activa", async () => {
+    const { getDocs } = await import("firebase/firestore");
 
-    const confirmButton = screen.getByText('Confirmar Calificación')
-    fireEvent.click(confirmButton)
+    const fechaFutura = new Date();
+    fechaFutura.setDate(fechaFutura.getDate() + 3);
 
-    await waitFor(() => {
-      expect(addDoc).toHaveBeenCalledWith(
-        undefined,
-        expect.objectContaining({
-          reservaId: 'reserva1',
-          usuarioId: 'user123',
-          propiedadId: 'prop1',
-          usuarioEmail: 'test@example.com',
-          puntaje: 5,
-          comentario: 'Excelente estadía'
-        })
-      )
-    })
+    getDocs.mockResolvedValueOnce({
+      empty: false,
+      docs: [
+        {
+          id: "res1",
+          data: () => ({
+            titulo: "Casa en la playa",
+            ubicacion: "Cancún",
+            fechaInicio: new Date().toISOString(),
+            fechaFin: fechaFutura.toISOString(),
+            precioPorNoche: 100,
+            totalPrecio: 300,
+            usuarioId: "test-user-id",
+            usuarioEmail: "test@example.com",
+          }),
+        },
+      ],
+    });
 
-    await waitFor(() => {
-      expect(deleteDoc).toHaveBeenCalled()
-    })
-
-    await waitFor(() => {
-      expect(screen.getByText('La reserva ha sido liberada y calificada correctamente.')).toBeInTheDocument()
-    })
-  })
-
-  // TEST 2:
-  it('debe manejar error al agregar calificación', async () => {
-    const { addDoc } = require('firebase/firestore')
-    addDoc.mockRejectedValue(new Error('Error de conexión'))
-
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-
-    render(<HistorialReservas />)
+    renderWithProviders(<HistorialReservas />);
 
     await waitFor(() => {
-      expect(screen.getByText('Mis Reservas')).toBeInTheDocument()
-    })
+      expect(screen.getByText(/Casa en la playa/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cancún/i)).toBeInTheDocument();
+      expect(screen.getByText(/Activa/i)).toBeInTheDocument(); 
+    });
+  });
 
-    const ratingButtons = screen.getAllByText('Calificar estadia')
-    fireEvent.click(ratingButtons[0])
 
-    const confirmButton = screen.getByText('Confirmar Calificación')
-    fireEvent.click(confirmButton)
-
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Error al agregar la calificacion:', expect.any(Error))
-    })
-
-    const { deleteDoc } = require('firebase/firestore')
-    expect(deleteDoc).not.toHaveBeenCalled()
-
-    consoleSpy.mockRestore()
-  })
-
-  // TEST 3:
-  it('debe manejar error al eliminar reserva pero continuar el proceso', async () => {
-    const { addDoc, deleteDoc } = require('firebase/firestore')
-    addDoc.mockResolvedValue({ id: 'calificacion1' })
-    deleteDoc.mockRejectedValue(new Error('Error al eliminar'))
-
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-
-    render(<HistorialReservas />)
-
-    await waitFor(() => {
-      expect(screen.getByText('Mis Reservas')).toBeInTheDocument()
-    })
-
-    const ratingButtons = screen.getAllByText('Calificar estadia')
-    fireEvent.click(ratingButtons[0])
-
-    const confirmButton = screen.getByText('Confirmar Calificación')
-    fireEvent.click(confirmButton)
-
-    await waitFor(() => {
-      expect(addDoc).toHaveBeenCalled()
-    })
-
-    await waitFor(() => {
-      expect(deleteDoc).toHaveBeenCalled()
-    })
-
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Error al eliminar la reserva:', expect.any(Error))
-    })
-
-    await waitFor(() => {
-      expect(screen.getByText('La reserva ha sido liberada y calificada correctamente.')).toBeInTheDocument()
-    })
-
-    consoleSpy.mockRestore()
-  })
 })

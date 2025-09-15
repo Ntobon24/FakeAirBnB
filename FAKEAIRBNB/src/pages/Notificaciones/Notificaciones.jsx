@@ -36,6 +36,7 @@ const Notificaciones = () => {
       setNotificaciones(notificacionesData);
     } catch (error) {
       console.error("Error obteniendo notificaciones:", error);
+      setError("Error al cargar las notificaciones");
     } finally {
       setLoading(false);
     }
@@ -48,7 +49,6 @@ const Notificaciones = () => {
       alert("Notificación eliminada exitosamente");
     } catch (error) {
       console.error("Error eliminando notificación:", error);
-      alert("Error al eliminar la notificación");
     }
   };
 
@@ -68,7 +68,6 @@ const Notificaciones = () => {
   return (
     <div className="notificaciones-container">
       <h2>Mis Notificaciones de Disponibilidad</h2>
-      
       {notificaciones.length === 0 ? (
         <div className="no-notificaciones">
           <i className="fas fa-bell-slash"></i>
