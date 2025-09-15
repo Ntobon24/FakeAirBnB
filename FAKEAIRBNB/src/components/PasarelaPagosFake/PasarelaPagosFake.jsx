@@ -1,4 +1,5 @@
 import "./PasarelaPagosFake.css";
+import PropTypes from "prop-types";
 
 const PasarelaPagos = ({ onClose, onConfirm }) => {
   return (
@@ -32,6 +33,11 @@ const PasarelaPagos = ({ onClose, onConfirm }) => {
       </dialog>
     </div>
   );
+};
+
+PasarelaPagos.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
 };
 
 export default PasarelaPagos;

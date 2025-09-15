@@ -1,5 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 import PropertyCard from "../PropertyCard/PropertyCard";
+import propiedadPropType from "../../propTypes/PropiedadProptype.jsx";
 import "./PropertyList.css";
 
 const PropertyList = ({ propiedades }) => {
@@ -10,6 +12,10 @@ const PropertyList = ({ propiedades }) => {
       ))}
     </div>
   );
+};
+
+PropertyList.propTypes = {
+  propiedades: PropTypes.arrayOf(propiedadPropType).isRequired,
 };
 
 export default PropertyList;

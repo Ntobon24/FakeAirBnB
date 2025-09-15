@@ -110,19 +110,15 @@ describe('FilterBar component', () => {
 
             render(<Home />)
 
-            await waitFor(() => { 
-                expect(screen.getByText('Cabaña rustica santa Elena')).toBeInTheDocument();
-                expect(screen.getByText('Apartamento centro')).toBeInTheDocument();
-            });           
-
+            expect(await screen.findByText('Cabaña rustica santa Elena')).toBeInTheDocument();
+            expect(await screen.findByText('Apartamento centro')).toBeInTheDocument();
             // Ejecutar filtro
             fireEvent.click(screen.getByTestId('aplicar-filtro'))
 
             // Esperar que la propiedad pase el filtro se muestre
-            await waitFor(() => {
-                expect(screen.getByText('Cabaña rustica santa Elena')).toBeInTheDocument();
-                expect(screen.getByText('Apartamento centro')).toBeInTheDocument();
-            })
+            expect(await screen.findByText('Cabaña rustica santa Elena')).toBeInTheDocument();
+            expect(await screen.findByText('Apartamento centro')).toBeInTheDocument();
+            
         })
 
 
@@ -153,10 +149,8 @@ describe('FilterBar component', () => {
 
             render(<Home />)
 
-            await waitFor(() => { 
-                expect(screen.getByText("Cabaña rustica santa Elena")).toBeInTheDocument();
-                expect(screen.getByText("Apartamento centro")).toBeInTheDocument();
-            });
+            expect(await screen.findByText('Cabaña rustica santa Elena')).toBeInTheDocument();
+            expect(await screen.findByText('Apartamento centro')).toBeInTheDocument();
 
             // Ejecutar filtro
             fireEvent.click(screen.getByTestId('aplicar-filtro'))
@@ -165,7 +159,7 @@ describe('FilterBar component', () => {
             await waitFor(() => {
                 expect(screen.queryByText("Cabaña rustica santa Elena")).not.toBeInTheDocument();
                 expect(screen.queryByText("Apartamento centro")).not.toBeInTheDocument();
-                expect(screen.getByText("No hay propiedades disponibles para tu busqueda")).toBeInTheDocument();
+                expect(screen.getByText("No hay propiedades disponibles para tu búsqueda")).toBeInTheDocument();
             })
 
         })
@@ -196,10 +190,8 @@ describe('FilterBar component', () => {
 
             render(<Home />)
 
-            await waitFor(() => { 
-                expect(screen.getByText("Cabaña rustica santa Elena")).toBeInTheDocument();
-                expect(screen.getByText("Apartamento centro")).toBeInTheDocument();
-            });
+            expect(await screen.findByText('Cabaña rustica santa Elena')).toBeInTheDocument();
+            expect(await screen.findByText('Apartamento centro')).toBeInTheDocument();
 
             // Ejecutar filtro
             fireEvent.click(screen.getByTestId('aplicar-filtro'))

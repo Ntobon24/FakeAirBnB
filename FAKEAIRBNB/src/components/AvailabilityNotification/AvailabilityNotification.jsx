@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
+import PropTypes from "prop-types";
 import './AvailabilityNotification.css';
 
 const AvailabilityNotification = ({ propiedad }) => {
@@ -184,6 +185,14 @@ const AvailabilityNotification = ({ propiedad }) => {
       )}
     </div>
   );
+};
+
+AvailabilityNotification.propTypes = {
+  propiedad: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    titulo: PropTypes.string.isRequired,
+    ubicacion: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default AvailabilityNotification;

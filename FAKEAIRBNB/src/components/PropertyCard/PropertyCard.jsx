@@ -2,8 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import AvailabilityNotification from "../AvailabilityNotification/AvailabilityNotification";
+import propiedadPropType from "../../propTypes/PropiedadProptype";
 import "./PropertyCard.css";
-
 
 const PropertyCard = ({ propiedad }) => {
   const navigate = useNavigate();
@@ -59,6 +59,10 @@ const PropertyCard = ({ propiedad }) => {
       </div>
     </div>
   );
+};
+
+PropertyCard.propTypes = {
+  propiedad: propiedadPropType.isRequired,
 };
 
 export default PropertyCard;

@@ -11,13 +11,13 @@ const Home = () => {
   const [propiedades, setPropiedades] = useState([]);
   const [propiedadesFiltradas, setPropiedadesFiltradas] = useState([]);
   const [propiedadesFiltradasBase, setPropiedadesFiltradasBase] = useState([]);
-  const [setSearchData] = useState({
+  const [searchData, setSearchData] = useState({
     location: "",
     startDate: null,
     endDate: null,
     guestsSearch: 0,
   });
-  const [setFilterData] = useState({
+  const [filterData, setFilterData] = useState({
     guests: 0,
     rooms: 0,
     bathrooms: 0,
@@ -80,7 +80,7 @@ const Home = () => {
 
     const reservas = await obtenerReservas();
 
-    const propiedadesDisponibles = propiedadesFiltradasBase.filter(
+    const propiedadesDisponibles = propiedades.filter(
       (propiedad) => {
         const estaReservada = reservas.some((reserva) => {
           const reservaFechaInicio = new Date(reserva.fechaInicio);
@@ -107,15 +107,14 @@ const Home = () => {
       }
     );
 
-    setPropiedadesFiltradas(propiedadesDisponibles);
     setPropiedadesFiltradasBase(propiedadesDisponibles);
+    setPropiedadesFiltradas(propiedadesDisponibles);
   };
 
   const handleFilter = (datosFiltro) => {
-    console.log("datos de filtro:", datosFiltro);
 
     setFilterData(datosFiltro);
-    const propiedadesDisponiblesFiltradas = propiedades.filter((propiedad) => {
+    const propiedadesDisponiblesFiltradas = propiedadesFiltradasBase.filter((propiedad) => {
       const cumpleHuespedes = propiedad.maxPersonas >= datosFiltro.guests;
       const cumpleHabitaciones = propiedad.habitaciones >= datosFiltro.rooms;
       const cumpleBanos = propiedad.banos >= datosFiltro.bathrooms;
@@ -153,15 +152,17 @@ const Home = () => {
   }
 
   return (
-    <div className="home-container">
-      <SearchBar onSearch={handleSearch} />
-      <hr className="divider" />
-      <FilterBar onFilterChange={handleFilter} />
-      <div className="mapa-inicio"></div>
-      <MapWithMarkers propiedades={propiedadesFiltradas} />
-      {contenido}
+    <div >
+      <SearchBar onSearch={handleSearch} searchData={searchData} />
+      <hr/>
+      <FilterBar onFilterChange={handleFilter} filterData={filterData} />
+      <div >
+        <MapWithMarkers propiedades={propiedadesFiltradas} />
+        {contenido}
+      </div>
     </div>
   );
+
 };
 
 export default Home;

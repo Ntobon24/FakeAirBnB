@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
+import PropTypes from "prop-types";
 import "./ServiceRating.css";
 
 const ServiceRating = ({ reserva, onClose, onConfirm }) => {
@@ -148,6 +149,17 @@ const ServiceRating = ({ reserva, onClose, onConfirm }) => {
       </dialog>
     </div>
   );
+};
+
+ServiceRating.propTypes = {
+  reserva: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    usuarioId: PropTypes.string.isRequired,
+    propiedadId: PropTypes.string.isRequired,
+    usuarioEmail: PropTypes.string.isRequired,
+  }).isRequired,
+  onClose: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
 };
 
 export default ServiceRating;

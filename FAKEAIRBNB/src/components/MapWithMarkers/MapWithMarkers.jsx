@@ -1,6 +1,7 @@
 import React from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from "prop-types";
 
 const containerStyle = {
   width: '100%',
@@ -41,6 +42,17 @@ const MapWithMarkers = ( {propiedades} ) => {
       </GoogleMap>
     </LoadScript>
   );
+};
+
+MapWithMarkers.propTypes = {
+  propiedades: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      titulo: PropTypes.string.isRequired,
+      lat: PropTypes.number.isRequired,
+      lng: PropTypes.number.isRequired,
+    })
+  ).isRequired,
 };
 
 export default MapWithMarkers;

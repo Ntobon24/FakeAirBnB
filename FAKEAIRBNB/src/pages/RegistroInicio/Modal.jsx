@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "./Modal.css";
 function Modal({ show, onClose , children }) {
   return (
@@ -7,8 +8,7 @@ function Modal({ show, onClose , children }) {
         <div className="modal-content">
           <div className="modal-header">
             <h4 className="modal-title">Iniciar sesión o registrarse</h4>
-            <button type="button" className="btn-close" onClick={onClose}>
-                
+            <button type="button" className="btn-close" onClick={onClose}>           
             </button>
           </div>
           <h5 className= "segundo-titulo-modal">Te damos la bienvenida a FakeAirbnb</h5>
@@ -18,5 +18,11 @@ function Modal({ show, onClose , children }) {
     </div>
   );
 }
+
+Modal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+};
 
 export default Modal;

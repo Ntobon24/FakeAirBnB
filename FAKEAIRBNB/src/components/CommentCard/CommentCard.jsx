@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "./CommentCard.css";
 
 
@@ -38,6 +39,15 @@ const PropertyCard = ({ calificacion }) => {
             </div>        
         </div>
     );
+};
+
+PropertyCard.propTypes = {
+  calificacion: PropTypes.shape({
+    usuarioEmail: PropTypes.string.isRequired,
+    puntaje: PropTypes.number.isRequired,
+    fechaPublicacion: PropTypes.string.isRequired,
+    comentario: PropTypes.string,
+  }).isRequired,
 };
 
 export default PropertyCard;

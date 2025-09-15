@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
+import PropTypes from "prop-types";
 import CommentCard from "../CommentCard/CommentCard";
 
 
@@ -62,6 +63,10 @@ const CommentsList = ( {propiedadId} ) => {
             {content}
           </div>
         );
+};
+
+CommentsList.propTypes = {
+  propiedadId: PropTypes.string.isRequired,
 };
 
 export default CommentsList;

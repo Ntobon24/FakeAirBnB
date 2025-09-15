@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import app from "../../firebase/firebaseConfig";
 import { useAuth } from "../../context/AuthContext";
+import PropTypes from "prop-types";
 const auth = getAuth(app);
 
 const Register = ({ onClose }) => {
@@ -51,5 +52,9 @@ const Register = ({ onClose }) => {
       </form>
     </div>
   );
+};
+
+Register.propTypes = {
+  onClose: PropTypes.func.isRequired,
 };
 export default Register;

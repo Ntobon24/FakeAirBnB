@@ -14,10 +14,10 @@
     "test:coverage": "vitest run --coverage",
     "analyze": "sonar-scanner"
   },
-
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",
     "firebase": "^11.3.1",
+    "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-datepicker": "^8.0.0",
     "react-dom": "^19.0.0",

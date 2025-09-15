@@ -1,21 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import DatePicker from "react-datepicker";
+import PropTypes from "prop-types";
 import "./SearchBar.css";
 
-const SearchBar = ({ onSearch }) => {
-  const [location, setLocation] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+const SearchBar = ({ onSearch, searchData }) => {
+  const [filters, setFilters] = useState(searchData);
   const [mensaje, setMensaje] = useState("");
 
+  useEffect(() => {
+    setFilters(searchData);
+  }, [searchData]);
+
   const handleSearchSubmit = () => {
-    if (!startDate || !endDate) {
+    if (!filters.startDate || !filters.endDate) {
       setMensaje("Selecciona un rango de fechas válido.");
       return;
     }
 
     setMensaje("");
-    onSearch({ location, startDate, endDate });
+    onSearch(filters);
   };
 
   return (
@@ -27,9 +30,9 @@ const SearchBar = ({ onSearch }) => {
             id="location"
             className="input-location"
             type="text"
-            value={location}
+            value={filters.location}
             placeholder="¿A dónde vas?"
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={(e) => setFilters({...filters, location: e.target.value})}
           />
         </div>
 
@@ -38,9 +41,9 @@ const SearchBar = ({ onSearch }) => {
           <DatePicker
             id="start-date"
             className="date"
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-            minDate={new Date()}
+            selected={filters.startDate}
+            onChange={(date) => setFilters({...filters, startDate: date})}
+            minDate={filters.startDate}
           />
         </div>
 
@@ -49,9 +52,9 @@ const SearchBar = ({ onSearch }) => {
           <DatePicker
             id="end-date"
             className="date"
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            minDate={startDate}
+            selected={filters.endDate}
+            onChange={(date) => setFilters({...filters, endDate: date})}
+            minDate={filters.startDate}
           />
         </div>
 
@@ -63,6 +66,16 @@ const SearchBar = ({ onSearch }) => {
       {mensaje && <span className="error-mensaje">{mensaje}</span>}
     </div>
   );
+};
+
+SearchBar.propTypes = {
+  onSearch: PropTypes.func.isRequired,
+  searchData: PropTypes.shape({
+    location: PropTypes.string,
+    startDate: PropTypes.instanceOf(Date),
+    endDate: PropTypes.instanceOf(Date),
+    guestsSearch: PropTypes.number,
+  }).isRequired,
 };
 
 export default SearchBar;

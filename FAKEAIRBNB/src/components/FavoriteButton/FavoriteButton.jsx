@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { collection, addDoc, deleteDoc, query, where, getDocs, doc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
+import PropTypes from "prop-types";
 import './FavoriteButton.css';
 
 const FavoriteButton = ({ propiedad }) => {
@@ -110,6 +111,17 @@ const FavoriteButton = ({ propiedad }) => {
       {loading && <span className="loading-spinner"></span>}
     </button>
   );
+};
+
+FavoriteButton.propTypes = {
+  propiedad: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    titulo: PropTypes.string,
+    ubicacion: PropTypes.string,
+    precio: PropTypes.number,
+    imagenes: PropTypes.arrayOf(PropTypes.string),
+    FotosPropiedad: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
 };
 
 export default FavoriteButton;

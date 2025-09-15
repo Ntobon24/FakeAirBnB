@@ -1,6 +1,7 @@
 import app from "../firebase/firebaseConfig";
 import { getAuth , onAuthStateChanged, signOut } from "firebase/auth";
 import { createContext, useEffect, useState , useContext, useMemo } from "react";
+import PropTypes from "prop-types";
 
 const auth =  getAuth(app);
 
@@ -37,6 +38,11 @@ export const AuthProvider = ({ children }) =>{
             {children}
         </AuthContext.Provider>
     );
+};
+
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export const useAuth = () => useContext(AuthContext);

@@ -1,6 +1,6 @@
  import React, { useState } from "react";
  import "./Carrousel.css";
-
+import PropTypes from "prop-types";
 
 const Carrousel = ({ FotosPropiedad, idPropiedad }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,4 +65,10 @@ const Carrousel = ({ FotosPropiedad, idPropiedad }) => {
         </div>
       );  
 };
+
+Carrousel.propTypes = {
+  FotosPropiedad: PropTypes.arrayOf(PropTypes.string).isRequired,
+  idPropiedad: PropTypes.string.isRequired,
+};
+
 export default Carrousel;

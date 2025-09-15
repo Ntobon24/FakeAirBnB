@@ -171,7 +171,7 @@ describe('SearchBar component', () => {
         await waitFor(() => {
             expect(screen.queryByText("Apartamento Medellin")).not.toBeInTheDocument();
             expect(screen.queryByText("Apartamento Bogota")).not.toBeInTheDocument();
-            expect(screen.getByText("No hay propiedades disponibles para tu busqueda")).toBeInTheDocument();
+            expect(screen.getByText("No hay propiedades disponibles para tu búsqueda")).toBeInTheDocument();
         });
     });
 

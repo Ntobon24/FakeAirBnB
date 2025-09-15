@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const Galeria = ({ FotosPropiedad }) => {
   if (!FotosPropiedad || FotosPropiedad.length === 0) {
     return <p>Fotos no disponibles</p>;
@@ -21,6 +23,10 @@ const Galeria = ({ FotosPropiedad }) => {
       </div>
     </div>
   );
+};
+
+Galeria.propTypes = {
+  FotosPropiedad: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Galeria;

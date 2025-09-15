@@ -1,143 +1,141 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import "./FilterBar.css";
 
-const FilterBar = ({onFilterChange }) => {
-  
-  const maxPrice = 2000000
-  const [guests, setGuests] = useState(0);
-  const [rooms, setRooms] = useState(0);
-  const [bathrooms, setBathrooms] = useState(0);
-  const [price, setPrice] = useState(maxPrice);
-  const [pets, setPets] = useState(false);
-  const [pool, setPool] = useState(false);
-  const [wifi, setWifi] = useState(false);
-  ;
-  
-  const pointerPosition = (price / maxPrice) * 100;
+const FilterBar = ({ onFilterChange, filterData }) => {
+  const maxPrice = 2000000;
+  const [filters, setFilters] = useState(filterData);
 
-  const handleFilterChange = () => {   
-    onFilterChange({guests: guests, rooms: rooms, bathrooms: bathrooms, maxPrice: price, pets: pets, pool: pool, wifi: wifi });
+  useEffect(() => {
+    setFilters(filterData);
+  }, [filterData]);
+
+  const pointerPosition = (filters.maxPrice / maxPrice) * 100;
+
+  const handleFilterSubmit = () => {
+    onFilterChange(filters);
   };
 
   return (
-    <div className="filter-bar"> 
-
+    <div className="filter-bar">
       <div className="inputs-container">
-        <div className="filter-group"> 
-        <label htmlFor="guests">Huespedes</label>
-        <input 
-          className="input-data"
-          id="guests"
-          type="number"
-          value={guests}
-          min="0"
-          onChange={(e) => setGuests(Number(e.target.value))}
-        />
-        </div>
-
         <div className="filter-group">
-        <label htmlFor="rooms">Habitaciones</label>
-        <input 
-          className="input-data"
-          id="rooms"
-          type="number"
-          value={rooms}
-          min="0"
-          onChange={(e) => setRooms(Number(e.target.value))}
-        />
-        </div>
-
-        <div className="filter-group">
-        <label htmlFor="bathrooms">Baños</label>
-        <input 
-          className="input-data"
-          id="bathrooms"
-          type="number"
-          value={bathrooms}
-          min="0"
-          onChange={(e) => setBathrooms(Number(e.target.value))}
-        />
-        </div>
-      </div>   
-       
-
-      <div className="price-slider-container">       
-          <label htmlFor="price-slider" className="price-label">Precio máximo</label>
+          <label htmlFor="guests">Huéspedes</label>
           <input
-            id="price-slider"
-            className="price-slider"
-            type="range"
-            min={0}
-            max= {maxPrice}
-            value={price}
-            onChange={(e) => setPrice(Number(e.target.value))}
-            aria-label="Precio máximo"
+            className="input-data"
+            id="guests"
+            type="number"
+            value={filters.guests}
+            min="0"
+            onChange={(e) =>
+              setFilters({ ...filters, guests: Number(e.target.value) })
+            }
           />
-          <div 
-            className="pointer-slider" 
-            style={{ left: `${pointerPosition}%` }} >
-          </div>
-        </div>  
-        
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="rooms">Habitaciones</label>
+          <input
+            className="input-data"
+            id="rooms"
+            type="number"
+            value={filters.rooms}
+            min="0"
+            onChange={(e) =>
+              setFilters({ ...filters, rooms: Number(e.target.value) })
+            }
+          />
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="bathrooms">Baños</label>
+          <input
+            className="input-data"
+            id="bathrooms"
+            type="number"
+            value={filters.bathrooms}
+            min="0"
+            onChange={(e) =>
+              setFilters({ ...filters, bathrooms: Number(e.target.value) })
+            }
+          />
+        </div>
+      </div>
+
+      <div className="price-slider-container">
+        <label htmlFor="price-slider" className="price-label">
+          Precio máximo
+        </label>
+        <input
+          id="price-slider"
+          className="price-slider"
+          type="range"
+          min={0}
+          max={maxPrice}
+          value={filters.maxPrice}
+          onChange={(e) =>
+            setFilters({ ...filters, maxPrice: Number(e.target.value) })
+          }
+          aria-label="Precio máximo"
+        />
+        <div
+          className="pointer-slider"
+          style={{ left: `${pointerPosition}%` }}
+        ></div>
+      </div>
+
       <div className="filter-group">
         <span>Precio máximo </span>
-        <div className="price-value"> $ {price.toLocaleString()}</div> 
-      </div> 
+        <div className="price-value"> ${filters.maxPrice.toLocaleString()}</div>
+      </div>
 
       <div className="checks-container">
-        <button 
-          className={`toggle-btn ${pets ? "active" : ""}`}
-          onClick={() => setPets(!pets)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              setPets(!pets);
-            }
-          }}
-          aria-pressed={pets}
+        <button
+          className={`toggle-btn ${filters.pets ? "active" : ""}`}
+          onClick={() => setFilters({ ...filters, pets: !filters.pets })}
+          aria-pressed={filters.pets}
           type="button"
-        > 
-          Mascotas 
+        >
+          Mascotas
         </button>
 
-        <button 
-          className={`toggle-btn ${pool ? "active" : ""}`}
-          onClick={() => setPool(!pool)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              setPool(!pool);
-            }
-          }}
-          aria-pressed={pool}
+        <button
+          className={`toggle-btn ${filters.pool ? "active" : ""}`}
+          onClick={() => setFilters({ ...filters, pool: !filters.pool })}
+          aria-pressed={filters.pool}
           type="button"
-        > 
-          Piscina 
+        >
+          Piscina
         </button>
 
-        <button 
-          className={`toggle-btn ${wifi ? "active" : ""}`}
-          onClick={() => setWifi(!wifi)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              setWifi(!wifi);
-            }
-          }}
-          aria-pressed={wifi}
+        <button
+          className={`toggle-btn ${filters.wifi ? "active" : ""}`}
+          onClick={() => setFilters({ ...filters, wifi: !filters.wifi })}
+          aria-pressed={filters.wifi}
           type="button"
-        > 
+        >
           WiFi
         </button>
       </div>
-      
-      <button 
-        className="btn-filter"
-        onClick={handleFilterChange}>Filtrar
-      </button>
 
+      <button className="btn-filter" onClick={handleFilterSubmit}>
+        Filtrar
+      </button>
     </div>
   );
+};
+
+FilterBar.propTypes = {
+  onFilterChange: PropTypes.func.isRequired,
+  filterData: PropTypes.shape({
+    guests: PropTypes.number,
+    rooms: PropTypes.number,
+    bathrooms: PropTypes.number,
+    maxPrice: PropTypes.number,
+    pets: PropTypes.bool,
+    pool: PropTypes.bool,
+    wifi: PropTypes.bool,
+  }).isRequired,
 };
 
 export default FilterBar;
