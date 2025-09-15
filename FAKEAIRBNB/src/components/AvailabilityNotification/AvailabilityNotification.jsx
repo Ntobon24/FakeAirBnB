@@ -11,6 +11,7 @@ const AvailabilityNotification = ({ propiedad }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [subscribeError, setSubscribeError] = useState(null);
 
   const checkSubscription = async () => {
     if (!usuario || !propiedad) return;
@@ -45,6 +46,7 @@ const AvailabilityNotification = ({ propiedad }) => {
     }
 
     setLoading(true);
+    setSubscribeError(null);
     try {
       await addDoc(collection(db, "notificaciones_disponibilidad"), {
         usuarioId: usuario.uid,
@@ -63,7 +65,7 @@ const AvailabilityNotification = ({ propiedad }) => {
       alert("Te has suscrito exitosamente a las notificaciones de disponibilidad");
     } catch (error) {
       console.error("Error al suscribirse:", error);
-      alert("Error al suscribirse a las notificaciones");
+      setSubscribeError("Error al suscribirse");
     } finally {
       setLoading(false);
     }
@@ -173,6 +175,7 @@ const AvailabilityNotification = ({ propiedad }) => {
                 {loading ? 'Suscribiendo...' : 'Suscribirse'}
               </button>
             </div>
+            {subscribeError && <p className="error-message">{subscribeError}</p>}
           </div>
         </div>
       )}

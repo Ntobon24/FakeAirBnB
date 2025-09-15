@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import CommentCard from "../CommentCard/CommentCard";
-import "./CommentsList.css";
 
 
 const CommentsList = ( {propiedadId} ) => {

@@ -1,4 +1,6 @@
-
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { BrowserRouter } from 'react-router-dom'
 import Register from '../pages/RegistroInicio/Register'
 const { createUserWithEmailAndPassword } = await import('firebase/auth')
 

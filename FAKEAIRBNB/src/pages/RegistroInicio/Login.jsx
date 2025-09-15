@@ -22,6 +22,12 @@ const Login = () => {
     e.preventDefault();
     setError(null);
 
+    // Validacion de campos vacíos
+    if (!email || !password) {
+      setError("Por favor completa todos los campos");
+      return;
+      }
+
     // Guardar tiempo de inicio
     const startTime = performance.now();
 

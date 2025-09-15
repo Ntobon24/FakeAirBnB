@@ -1,3 +1,7 @@
+#Archivo configuracion sonarqube memoria cache
+.scannerwork/
+
+
 #Environment variables
 .env
 

@@ -14,6 +14,11 @@ const Register = ({ onClose }) => {
     const handleSubmit = async(e) =>{
         e.preventDefault();
         setError(null);
+
+        if (!email || !password) {
+            setError("Por favor completa todos los campos");
+            return; 
+        }
         try {
             await createUserWithEmailAndPassword(auth,email,password)
             console.log("Usuario registrado");
