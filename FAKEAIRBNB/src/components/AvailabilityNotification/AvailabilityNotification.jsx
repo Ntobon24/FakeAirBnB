@@ -142,24 +142,27 @@ const AvailabilityNotification = ({ propiedad }) => {
             <h4>¿Cuándo te interesa esta propiedad?</h4>
             <div className="date-inputs">
               <div className="date-input">
-                <label>Fecha de llegada:</label>
+                <label htmlFor="fechaLlegada">Fecha de llegada:</label>
                 <input
+                  id="fechaLlegada"
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={new Date().toISOString().split("T")[0]}
                 />
               </div>
               <div className="date-input">
-                <label>Fecha de salida:</label>
+                <label htmlFor="fechaSalida">Fecha de salida:</label>
                 <input
+                  id="fechaSalida"
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  min={startDate || new Date().toISOString().split('T')[0]}
+                  min={startDate || new Date().toISOString().split("T")[0]}
                 />
               </div>
             </div>
+
             <div className="date-picker-actions">
               <button
                 className="btn-cancel"

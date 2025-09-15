@@ -11,8 +11,10 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "analyze": "sonar-scanner"
   },
+
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",
     "firebase": "^11.3.1",
