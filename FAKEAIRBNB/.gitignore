@@ -1,6 +1,9 @@
-#Archivo configuracion sonarqube memoria cache
+# SonarQube local
 .scannerwork/
+report-task.txt
 
+# Coverage
+coverage/
 
 #Environment variables
 .env
