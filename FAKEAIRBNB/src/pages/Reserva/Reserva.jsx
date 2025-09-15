@@ -169,16 +169,16 @@ const Reserva = () => {
   return (
     <div className="reserva">
       <h2>{propiedad.titulo}</h2>
-
+  
       <div className="galeria-container">
         <Galeria FotosPropiedad={propiedad.FotosPropiedad} />
       </div>
-
+  
       <div className="contenido-principal">
         <h3>{propiedad.descripcion}</h3>
         <h4>Ubicación: {propiedad.ubicacion}</h4>
         <h4>Clima: {propiedad.clima}</h4>
-
+  
         <div className="detalles-propiedad">
           <p>🏠 {propiedad.habitaciones} habitaciones</p>
           <p>🚿 {propiedad.banos} baños</p>
@@ -189,38 +189,40 @@ const Reserva = () => {
           <p>❄️ Aire acondicionado: {propiedad.aireAcondicionado ? "Sí" : "No"}</p>
           <p>🚗 Parqueadero: {propiedad.parqueadero ? "Sí" : "No"}</p>
         </div>
-
+  
         <h4>🛋️ Comodidades:</h4>
         <ul>
-          {propiedad.comodidades.map((comodidad, index) => (
-            <li key={index}>✔️ {comodidad}</li>
+          {propiedad.comodidades.map((comodidad) => (
+            <li key={comodidad}>✔️ {comodidad}</li>
           ))}
         </ul>
-
+  
         <h4>🚫 Reglas:</h4>
         <ul>
-          {propiedad.reglas.map((regla, index) => (
-            <li key={index}>⚠️ {regla}</li>
+          {propiedad.reglas.map((regla) => (
+            <li key={regla}>⚠️ {regla}</li>
           ))}
         </ul>
       </div>
-
+  
       <div className="cajita-separada-infocasa">
         <h5>${propiedad.precio.toLocaleString()} COP</h5>
         <p>por noche</p>
-
+  
         <div className="datepicker-container">
-          <label>Fecha de inicio:</label>
+          <label htmlFor="fecha-inicio">Fecha de inicio:</label>
           <DatePicker
+            id="fecha-inicio"
             className="fechita"
             selected={startDate}
             onChange={(date) => setStartDate(date)}
             minDate={new Date()}
             excludeDates={fechasReservadas}
           />
-
-          <label>Fecha de fin:</label>
+  
+          <label htmlFor="fecha-fin">Fecha de fin:</label>
           <DatePicker
+            id="fecha-fin"
             className="fechita"
             selected={endDate}
             onChange={(date) => setEndDate(date)}
@@ -228,9 +230,9 @@ const Reserva = () => {
             excludeDates={fechasReservadas}
           />
         </div>
-
+  
         <p>Total a pagar: ${totalPrecio.toLocaleString()} COP</p>
-
+  
         {!user ? (
           <Login />
         ) : (
@@ -238,18 +240,18 @@ const Reserva = () => {
             Reservar
           </button>
         )}
-
+  
         {mensaje && <p className="mensaje">{mensaje}</p>}
         {showPasarela && (
           <PasarelaPagos onClose={() => setShowPasarela(false)} onConfirm={confirmarPago} />
         )}
       </div>
       <div className="comments-list-container">
-        <CommentsList propiedadId={propiedad.id}/>
+        <CommentsList propiedadId={propiedad.id} />
       </div>
-    
     </div>
   );
+  
 };
 
 export default Reserva;

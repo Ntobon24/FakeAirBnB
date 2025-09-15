@@ -22,42 +22,47 @@ const Carrousel = ({ FotosPropiedad, idPropiedad }) => {
         }));
       };
 
-
-  return (
-
+      return (
         <div id={`carousel-${idPropiedad}`} className="carousel slide">
-            <div className="carousel-inner">
-                {FotosPropiedad.map((img, index) => (
-                <div key={index} className={`carousel-item ${index === (currentIndex[idPropiedad] || 0) ? "active" : ""}`}>
-                    <img src={img} className="d-block w-100" alt={`Imagen ${index + 1}`} />
-                </div>
-                ))}
-            </div>
-
-  
-            <button
-                className="carousel-control-prev"
-                type="button"
-                onClick={(e) => {
-                e.stopPropagation();
-                prevImage();
-                }}
-            >
-                <span className="carousel-control-prev-icon"></span>
-            </button>
-
-
-            <button
-                className="carousel-control-next"
-                type="button"
-                onClick={(e) => {
-                e.stopPropagation();
-                nextImage();
-                }}
-            >
-                <span className="carousel-control-next-icon"></span>
-            </button>
+          <div className="carousel-inner">
+            {FotosPropiedad.map((img, index) => (
+              <div
+                key={`${idPropiedad}-${img}`} // 🔹 usamos idPropiedad + la ruta/URL de la imagen
+                className={`carousel-item ${
+                  index === (currentIndex[idPropiedad] || 0) ? "active" : ""
+                }`}
+              >
+                <img
+                  src={img}
+                  className="d-block w-100"
+                  alt={`Imagen ${index + 1}`}
+                />
+              </div>
+            ))}
+          </div>
+      
+          <button
+            className="carousel-control-prev"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              prevImage();
+            }}
+          >
+            <span className="carousel-control-prev-icon"></span>
+          </button>
+      
+          <button
+            className="carousel-control-next"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              nextImage();
+            }}
+          >
+            <span className="carousel-control-next-icon"></span>
+          </button>
         </div>
-  );
+      );  
 };
 export default Carrousel;

@@ -13,11 +13,11 @@ const Header = () => {
         {usuario && (
           <>
             <Link to="/favoritos" className="nav-link">
-              <i className="fas fa-heart"></i>
+              <i className="fas fa-heart"></i>{" "}
               Favoritos
             </Link>
             <Link to="/notificaciones" className="nav-link">
-              <i className="fas fa-bell"></i>
+              <i className="fas fa-bell"></i>{" "}
               Notificaciones
             </Link>
           </>

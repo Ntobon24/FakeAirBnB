@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { getDocs, collection } from 'firebase/firestore';
-import { db } from '../../firebase/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 
 const containerStyle = {
@@ -15,13 +13,11 @@ const center = {
 };
 
 const MapWithMarkers = ( {propiedades} ) => {
-  const [map, setMap] = useState(null);
   const navigate = useNavigate();
 
   
-  const onLoad = mapInstance => {
-    setMap(mapInstance);
-  };
+  const onLoad = () => {};
+
 
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
