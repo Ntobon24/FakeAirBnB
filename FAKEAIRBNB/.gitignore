@@ -1,5 +1,5 @@
-#Archivo configuracion sonarqube local
-sonar-project.properties
+#Archivo configuracion sonarqube memoria cache
+.scannerwork/
 
 
 #Environment variables
