@@ -62,13 +62,16 @@ const FilterBar = ({onFilterChange }) => {
        
 
       <div className="price-slider-container">       
+          <label htmlFor="price-slider" className="price-label">Precio máximo</label>
           <input
+            id="price-slider"
             className="price-slider"
             type="range"
             min={0}
             max= {maxPrice}
             value={price}
             onChange={(e) => setPrice(Number(e.target.value))}
+            aria-label="Precio máximo"
           />
           <div 
             className="pointer-slider" 
@@ -82,20 +85,50 @@ const FilterBar = ({onFilterChange }) => {
       </div> 
 
       <div className="checks-container">
-        <label className={`toggle-btn ${pets ? "active" : ""}`}
-          onClick={() => setPets(!pets)}> 
+        <button 
+          className={`toggle-btn ${pets ? "active" : ""}`}
+          onClick={() => setPets(!pets)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setPets(!pets);
+            }
+          }}
+          aria-pressed={pets}
+          type="button"
+        > 
           Mascotas 
-        </label>
+        </button>
 
-        <label className={`toggle-btn ${pool ? "active" : ""}`}
-          onClick={() => setPool(!pool)}> 
+        <button 
+          className={`toggle-btn ${pool ? "active" : ""}`}
+          onClick={() => setPool(!pool)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setPool(!pool);
+            }
+          }}
+          aria-pressed={pool}
+          type="button"
+        > 
           Piscina 
-        </label>
+        </button>
 
-        <label className={`toggle-btn ${wifi ? "active" : ""}`}
-          onClick={() => setWifi(!wifi)}> 
+        <button 
+          className={`toggle-btn ${wifi ? "active" : ""}`}
+          onClick={() => setWifi(!wifi)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setWifi(!wifi);
+            }
+          }}
+          aria-pressed={wifi}
+          type="button"
+        > 
           WiFi
-        </label>
+        </button>
       </div>
       
       <button 

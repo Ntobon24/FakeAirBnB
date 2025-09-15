@@ -30,23 +30,38 @@ const CommentsList = ( {propiedadId} ) => {
 
 
 
-    return (
-        <div className="comments-list">
-            <h4>💬 Calificaciones:</h4>
-            {loading ? (
-                <p className="mensaje-cargando">Cargando calificaciones de la propiedad...</p>
-            ) : calificacionesPropiedad.length === 0 ? (
-                <p>Aun no existen calificaciones para esta propiedad</p>
-            ) : (
-                <div className="comments-list-container">
-                    {calificacionesPropiedad.map((calificacion) => (
-                        <CommentCard key={calificacion.id} calificacion={calificacion} />
-                    ))}
+        let content;
 
-                </div>
-            )}
-        </div>
-    );
+        switch (true) {
+          case loading:
+            content = (
+              <p className="mensaje-cargando">
+                Cargando calificaciones de la propiedad...
+              </p>
+            );
+            break;
+        
+          case calificacionesPropiedad.length === 0:
+            content = <p>Aun no existen calificaciones para esta propiedad</p>;
+            break;
+        
+          default:
+            content = (
+              <div className="comments-list-container">
+                {calificacionesPropiedad.map((calificacion) => (
+                  <CommentCard key={calificacion.id} calificacion={calificacion} />
+                ))}
+              </div>
+            );
+            break;
+        }
+        
+        return (
+          <div className="comments-list">
+            <h4>💬 Calificaciones:</h4>
+            {content}
+          </div>
+        );
 };
 
 export default CommentsList;

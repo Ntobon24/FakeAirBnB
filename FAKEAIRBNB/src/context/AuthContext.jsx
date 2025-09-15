@@ -1,47 +1,42 @@
 import app from "../firebase/firebaseConfig";
-
 import { getAuth , onAuthStateChanged, signOut } from "firebase/auth";
-import { createContext, useEffect, useState , useContext} from "react";
+import { createContext, useEffect, useState , useContext, useMemo } from "react";
 
+const auth =  getAuth(app);
 
-const auth =  getAuth(app)
-
-
-
-const AuthContext = createContext();//CREAMOS EL CONTEXTO QUE VA A CONTENER LA INFORMACION DEL USUARIO 
+const AuthContext = createContext(); //CREAMOS EL CONTEXTO QUE VA A CONTENER LA INFORMACION DEL USUARIO 
 
 export const AuthProvider = ({ children }) =>{
     const [usuario, setUsuario] = useState(null);
 
-    useEffect( () =>{
-       const unsubscribe = onAuthStateChanged(auth, (usuarioFirebase) => {  // FUNCION QUE ESCUCHA SI EL USUARIO ESTA AUTENTICADO O NO
-        setUsuario(usuarioFirebase)
-        
+    useEffect(() =>{
+       const unsubscribe = onAuthStateChanged(auth, (usuarioFirebase) => {  
+           setUsuario(usuarioFirebase);
        });
-       return() => unsubscribe(); // FUNCION QUE DEJA DE ESCUCHAR SI EL USUARIO ESTA AUTENTICADO O NO 
+       return () => unsubscribe(); 
+    },[]);
 
-
-
-    },[]); //se ejecuta solo una vez
-    
-    const logout = async()=>{ // FUNCION QUE CIERRA LA SESION
+    const logout = async () => { 
         try {
             console.log("AuthContext Provider - Usuario:", usuario);
-;
-            await signOut(auth);// espera a que se cierre la sesion antes de continuar
+            await signOut(auth);
             console.log("Sesion cerrada ");
         } catch (error) {
             console.error("Error al cerrar sesion:", error);
-            
         }
     };
 
-    return(//provider va a compartir la informacion del usuario y la funcion logout
-        <AuthContext.Provider value={{usuario, logout}}> 
+    // useMemo para evitar recrear el objeto en cada render
+    const value = useMemo(() => ({
+        usuario,
+        logout
+    }), [usuario]); // solo cambia cuando `usuario` cambia
+
+    return (
+        <AuthContext.Provider value={value}> 
             {children}
         </AuthContext.Provider>
     );
-
 };
-export const useAuth = () => useContext(AuthContext); //useContext es un hook que nos permite acceder a la informacion del usuario y la funcion logout
 
+export const useAuth = () => useContext(AuthContext);

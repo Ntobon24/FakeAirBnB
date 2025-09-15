@@ -36,17 +36,17 @@ const FavoriteButton = ({ propiedad }) => {
       alert("Debes iniciar sesión para guardar favoritos");
       return;
     }
-
-    if (!propiedad || !propiedad.id) {
+  
+    if (!propiedad?.id) {
       console.error("Propiedad inválida:", propiedad);
       alert("Error: Propiedad no válida");
       return;
     }
+  
 
     setLoading(true);
     try {
       if (isFavorite) {
-        // Remover de favoritos
         const favoritosQuery = query(
           collection(db, "favoritos"),
           where("usuarioId", "==", usuario.uid),
@@ -58,7 +58,6 @@ const FavoriteButton = ({ propiedad }) => {
         }
         setIsFavorite(false);
       } else {
-        // Función helper para obtener la imagen correcta
         const getPropertyImage = (propiedad) => {
           if (propiedad.imagenes && propiedad.imagenes.length > 0) {
             return propiedad.imagenes[0];
@@ -69,7 +68,6 @@ const FavoriteButton = ({ propiedad }) => {
           return 'https://via.placeholder.com/300x200?text=Sin+Imagen';
         };
 
-        // Agregar a favoritos
         await addDoc(collection(db, "favoritos"), {
           usuarioId: usuario.uid,
           usuarioEmail: usuario.email,

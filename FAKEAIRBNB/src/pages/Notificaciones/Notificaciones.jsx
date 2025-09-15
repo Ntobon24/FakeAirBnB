@@ -121,7 +121,7 @@ const Notificaciones = () => {
                   onClick={() => eliminarNotificacion(notificacion.id)}
                   title="Eliminar notificación"
                 >
-                  <i className="fas fa-trash"></i>
+                  <i className="fas fa-trash"></i>{" "}
                   Eliminar
                 </button>
               </div>
