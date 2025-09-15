@@ -51,12 +51,16 @@ const Reserva = () => {
         let fechasOcupadas = [];
         querySnapshot.forEach((doc) => {
           const reserva = doc.data();
-          let inicio = new Date(reserva.fechaInicio);
-          let fin = new Date(reserva.fechaFin);
+          const inicio = new Date(reserva.fechaInicio);
+          const fin = new Date(reserva.fechaFin);
 
-          while (inicio <= fin) {
-            fechasOcupadas.push(new Date(inicio));
-            inicio.setDate(inicio.getDate() + 1);
+          const inicioTime = inicio.getTime();
+          const finTime = fin.getTime();
+          
+          let currentTime = inicioTime;
+          while (currentTime <= finTime) {
+            fechasOcupadas.push(new Date(currentTime));
+            currentTime += 24 * 60 * 60 * 1000;
           }
         });
 
@@ -108,7 +112,6 @@ const Reserva = () => {
 
   const confirmarPago = async () => {
 
-    // Guardar tiempo de inicio
     const startTime = performance.now();
 
     try {
@@ -126,28 +129,29 @@ const Reserva = () => {
 
       await addDoc(collection(db, "reservas"), nuevaReserva);
 
-      // Actualizar fechas reservadas 
       let nuevasFechas = [];
-      let inicio = new Date(startDate);
-      let fin = new Date(endDate)
+      const inicio = new Date(startDate);
+      const fin = new Date(endDate);
 
-      while (inicio <= fin) {
-        nuevasFechas.push(new Date(inicio));
-        inicio.setDate(inicio.getDate() + 1);
+      const inicioTime = inicio.getTime();
+      const finTime = fin.getTime();
+      
+      let currentTime = inicioTime;
+      while (currentTime <= finTime) {
+        nuevasFechas.push(new Date(currentTime));
+        currentTime += 24 * 60 * 60 * 1000; // Add 24 hours in milliseconds
       }
 
-      // Actualizar el estado de fechas reservadas con las nuevas fechas  
       setFechasReservadas([...fechasReservadas, ...nuevasFechas]);
 
 
       setShowPasarela(false);
       setMensaje("Reserva confirmada. ¡Gracias por reservar!");
 
-      // Limpiar las fechas seleccionadas
       setStartDate(null);
       setEndDate(null);
 
-      const end = performance.now(); // Marca de fin
+      const end = performance.now();
       const latency = end - startTime;
 
       console.log(`Tiempo confirmacion de reserva: ${latency.toFixed(2)} ms`);
