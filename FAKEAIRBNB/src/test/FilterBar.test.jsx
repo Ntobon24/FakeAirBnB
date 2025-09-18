@@ -1,208 +1,95 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import FilterBar from "../components/FilterBar/FilterBar";
 
-import Home from '../pages/Home/Home'
+describe("FilterBar.jsx", () => {
+  let onFilterChangeMock;
+  let initialFilters;
 
-vi.mock('../firebase/firebaseConfig', () => ({
-  default: {},
-  db: {},
-  auth: {},
-  collection: vi.fn(),
-  getDocs: vi.fn(),
-  addDoc: vi.fn()
-}))
+  beforeEach(() => {
+    onFilterChangeMock = vi.fn();
+    initialFilters = {
+      guests: 2,
+      rooms: 1,
+      bathrooms: 1,
+      maxPrice: 500000,
+      pets: false,
+      pool: false,
+      wifi: false,
+    };
+  });
 
-//Se simulan los metodos con funciones vacias para no acceder a la bd
-vi.mock('firebase/firestore', () => ({
-  collection: vi.fn(),
-  getDocs: vi.fn(),
-}))
+  it("Renderiza con valores iniciales", () => {
+    render(
+      <FilterBar onFilterChange={onFilterChangeMock} filterData={initialFilters} />
+    );
+    expect(screen.getByLabelText("Huéspedes").value).toBe("2");
+    expect(screen.getByLabelText("Habitaciones").value).toBe("1");
+    expect(screen.getByLabelText("Baños").value).toBe("1");
+    expect(screen.getByLabelText("Precio máximo").value).toBe("500000");
+  });
 
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  
-}))
+  it("Cambia valores de inputs numéricos", () => {
+    render(
+      <FilterBar onFilterChange={onFilterChangeMock} filterData={initialFilters} />
+    );
+    fireEvent.change(screen.getByLabelText("Huéspedes"), {
+      target: { value: "5" },
+    });
+    fireEvent.change(screen.getByLabelText("Habitaciones"), {
+      target: { value: "3" },
+    });
+    fireEvent.change(screen.getByLabelText("Baños"), {
+      target: { value: "2" },
+    });
+    expect(screen.getByLabelText("Huéspedes").value).toBe("5");
+    expect(screen.getByLabelText("Habitaciones").value).toBe("3");
+    expect(screen.getByLabelText("Baños").value).toBe("2");
+  });
 
-// Mock props test 1
-const mockProps = [
-    {
-        id: 'p1',
-        titulo: 'Cabaña rustica santa Elena',
-        precio: 250000,
-        maxPersonas: 3, habitaciones: 1, banos: 1,
-        mascotasPermitidas: true, wifi: true, piscina: false
-    },
-    {
-        id: 'p2',
-        titulo: 'Apartamento centro',
-        precio: 300000,
-        maxPersonas: 1, habitaciones: 1, banos: 1,
-        mascotasPermitidas: false, wifi: false, piscina: false
-    }
+  it("Alterna los botones de Mascotas, Piscina y WiFi", () => {
+    render(
+      <FilterBar onFilterChange={onFilterChangeMock} filterData={initialFilters} />
+    );
+    const btnPets = screen.getByRole("button", { name: /Mascotas/i });
+    const btnPool = screen.getByRole("button", { name: /Piscina/i });
+    const btnWifi = screen.getByRole("button", { name: /WiFi/i });
 
-];
-        
+    fireEvent.click(btnPets);
+    expect(btnPets).toHaveAttribute("aria-pressed", "true");
 
-let filterBarValues;
+    fireEvent.click(btnPool);
+    expect(btnPool).toHaveAttribute("aria-pressed", "true");
 
-//Reemplaza componente FilterBar boton, ejecuta OnFilterChange envia DatosFiltrados validos
-vi.mock('../components/FilterBar/FilterBar', () => ({
-  default: ({ onFilterChange }) => (
-    <button data-testid="aplicar-filtro"
-      onClick={() => onFilterChange(filterBarValues)}
-    >
-      Aplicar filtro
-    </button>
-  )
-}))
+    fireEvent.click(btnWifi);
+    expect(btnWifi).toHaveAttribute("aria-pressed", "true");
+  });
 
-//mock SearchBar no ejecuta
-vi.mock('../components/SearchBar/SearchBar', () => ({
-  default: () => null }))
+  it("Llama onFilterChange con filtros actualizados al presionar Filtrar", () => {
+    render(
+      <FilterBar onFilterChange={onFilterChangeMock} filterData={initialFilters} />
+    );
+    fireEvent.change(screen.getByLabelText("Huéspedes"), {
+      target: { value: "4" },
+    });
+    fireEvent.click(screen.getByText(/Filtrar/i));
+    expect(onFilterChangeMock).toHaveBeenCalledWith(
+      expect.objectContaining({ guests: 4 })
+    );
+  });
 
-//Mock mapa no ejecuta
-vi.mock('../components/MapWithMarkers/MapWithMarkers', () => ({
-  default: () => null
-}))
+  it("Actualiza estado cuando cambian las props filterData", () => {
+    const { rerender } = render(
+      <FilterBar onFilterChange={onFilterChangeMock} filterData={initialFilters} />
+    );
+    expect(screen.getByLabelText("Huéspedes").value).toBe("2");
 
-//Mocks propertyList -> muestra titulos, propiedades filtradas(validar)
-vi.mock("../components/PropertyList/PropertyList", () => ({
-    default: ({ propiedades }) => (
-    <ul>
-      {propiedades.map((p) => (
-        <li key={p.id}>{p.titulo}</li>
-      ))}
-    </ul>
-  ),
-}));
-
-describe('FilterBar component', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-        vi.resetAllMocks();
-        filterBarValues = {};
-    })
-
-        //TEST 1
-        it('incluye propiedad cuando cumple capacidad y precio sin importar preferencias', async () => {
-            
-            const { getDocs } = await import('firebase/firestore')
-
-            getDocs.mockResolvedValueOnce({
-                docs: mockProps.map((p) => ({id: p.id, data: () => ({...p}) }))
-            });
-
-            getDocs.mockResolvedValueOnce({
-                docs: []
-            })
-
-            // mock filtros (pets, pool, wifi = false)
-            filterBarValues = {
-                guests: 1,
-                rooms: 1,
-                bathrooms: 1,
-                maxPrice: 1000000,
-                pets: false,
-                pool: false,
-                wifi: false
-            }
-
-            render(<Home />)
-
-            expect(await screen.findByText('Cabaña rustica santa Elena')).toBeInTheDocument();
-            expect(await screen.findByText('Apartamento centro')).toBeInTheDocument();
-            // Ejecutar filtro
-            fireEvent.click(screen.getByTestId('aplicar-filtro'))
-
-            // Esperar que la propiedad pase el filtro se muestre
-            expect(await screen.findByText('Cabaña rustica santa Elena')).toBeInTheDocument();
-            expect(await screen.findByText('Apartamento centro')).toBeInTheDocument();
-            
-        })
-
-
-        //TEST 2 validar retorno de lista vacia
-        it('excluye todas las propiedades cuando no cumplen almenos una condicion', async () => {
-
-
-            const { getDocs } = await import('firebase/firestore')
-
-            getDocs.mockResolvedValueOnce({
-                docs: mockProps.map((p) => ({id: p.id, data: () => ({...p}) }))
-            });
-
-            getDocs.mockResolvedValueOnce({
-                docs: []
-            })
-
-            // mock filtros -> forzar condicion imposible 
-            filterBarValues = {
-                guests: 1,
-                rooms: 1,
-                bathrooms: 1,
-                maxPrice: 10,
-                pets: false,
-                pool: false,
-                wifi: false
-            }
-
-            render(<Home />)
-
-            expect(await screen.findByText('Cabaña rustica santa Elena')).toBeInTheDocument();
-            expect(await screen.findByText('Apartamento centro')).toBeInTheDocument();
-
-            // Ejecutar filtro
-            fireEvent.click(screen.getByTestId('aplicar-filtro'))
-
-            // Esperar resultado lista vacia, mensaje
-            await waitFor(() => {
-                expect(screen.queryByText("Cabaña rustica santa Elena")).not.toBeInTheDocument();
-                expect(screen.queryByText("Apartamento centro")).not.toBeInTheDocument();
-                expect(screen.getByText("No hay propiedades disponibles para tu búsqueda")).toBeInTheDocument();
-            })
-
-        })
-
-        //TEST 3 
-        it('Incluye una propiedad cuando cumple todas las condiciones', async () => {
-
-            const { getDocs } = await import('firebase/firestore')
-
-            getDocs.mockResolvedValueOnce({
-                docs: mockProps.map((p) => ({id: p.id, data: () => ({...p}) }))
-            });
-
-            getDocs.mockResolvedValueOnce({
-                docs: []
-            })
-
-            // mock filtros -> forzar condicion imposible 
-            filterBarValues = {
-                guests: 1,
-                rooms: 1,
-                bathrooms: 1,
-                maxPrice: 500000,
-                pets: true,
-                pool: false,
-                wifi: true
-            }
-
-            render(<Home />)
-
-            expect(await screen.findByText('Cabaña rustica santa Elena')).toBeInTheDocument();
-            expect(await screen.findByText('Apartamento centro')).toBeInTheDocument();
-
-            // Ejecutar filtro
-            fireEvent.click(screen.getByTestId('aplicar-filtro'))
-
-            // Esperar retorna solo 1 propiedad
-            await waitFor(() => {
-                expect(screen.getByText("Cabaña rustica santa Elena")).toBeInTheDocument();
-                expect(screen.queryByText("Apartamento centro")).not.toBeInTheDocument();
-            })
-
-        })
-
-})
-
+    rerender(
+      <FilterBar
+        onFilterChange={onFilterChangeMock}
+        filterData={{ ...initialFilters, guests: 10 }}
+      />
+    );
+    expect(screen.getByLabelText("Huéspedes").value).toBe("10");
+  });
+});
