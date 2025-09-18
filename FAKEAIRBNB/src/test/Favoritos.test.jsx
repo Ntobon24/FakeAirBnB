@@ -1,172 +1,201 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
-import { createContext } from 'react'
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import Favoritos from "../pages/Favoritos/Favoritos";
+import { useAuth } from "../context/AuthContext";
+import { getDocs, deleteDoc, doc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
-const AuthContext = createContext()
-import Favoritos from '../pages/Favoritos/Favoritos'
+vi.mock("../context/AuthContext", () => ({
+  useAuth: vi.fn(),
+}));
 
-vi.mock('../firebase/firebaseConfig', () => ({
-  default: {},
-  db: {},
-  auth: {},
-  collection: vi.fn(),
-  getDocs: vi.fn(),
-  addDoc: vi.fn()
-}))
-
-vi.mock('firebase/firestore', () => ({
-  collection: vi.fn(),
-  query: vi.fn(),
-  where: vi.fn(),
-  getDocs: vi.fn(),
-  deleteDoc: vi.fn(),
-  doc: vi.fn()
-}))
-
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  onAuthStateChanged: vi.fn(),
-  signOut: vi.fn(),
-  setPersistence: vi.fn(),
-  browserLocalPersistence: {}
-}))
-
-const mockNavigate = vi.fn()
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
+vi.mock("firebase/firestore", () => {
   return {
-    ...actual,
-    useNavigate: () => mockNavigate
-  }
-})
+    __esModule: true,
+    getFirestore: vi.fn(),  
+    collection: vi.fn(),
+    query: vi.fn(),
+    where: vi.fn(),
+    getDocs: vi.fn(),
+    addDoc: vi.fn(),
+    deleteDoc: vi.fn(),
+    doc: vi.fn(),
+  };
+});
 
-const mockAuthContext = {
-  usuario: {
-    uid: 'test-user-id',
-    email: 'test@example.com'
-  }
-}
+vi.mock("react-router-dom", () => ({
+  useNavigate: vi.fn(),
+}));
 
-vi.mock('../context/AuthContext', () => ({
-  useAuth: () => mockAuthContext
-}))
+console.error = vi.fn();
 
-const renderWithProviders = (component) => {
-  return render(
-    <AuthContext.Provider value={mockAuthContext}>
-      <BrowserRouter>
-        {component}
-      </BrowserRouter>
-    </AuthContext.Provider>
-  )
-}
+const mockNavigate = vi.fn();
 
-describe('Favoritos Component', () => {
+describe("Favoritos.jsx", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+    useNavigate.mockReturnValue(mockNavigate);
+  });
 
-  // TEST 1:
-  it('debe obtener y mostrar la lista de favoritos correctamente', async () => {
-    const mockFavoritos = [
-      {
-        id: 'fav1',
-        titulo: 'Casa en la playa',
-        ubicacion: 'Cancún, México',
-        precio: 150,
-        imagen: 'test-image.jpg',
-        propiedadId: 'prop1',
-        fechaAgregado: { toDate: () => new Date('2024-01-01') }
-      }
-    ]
+  it("Redirige si no hay usuario", () => {
+    useAuth.mockReturnValue({ usuario: null });
+    render(<Favoritos />);
+    expect(mockNavigate).toHaveBeenCalledWith("/");
+  });
 
-    const mockSnapshot = {
-      docs: mockFavoritos.map(fav => ({
-        id: fav.id,
-        data: () => fav
-      }))
-    }
+  it("Muestra 'Cargando favoritos...' mientras carga", () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1" } });
+    getDocs.mockImplementation(
+      () => new Promise(() => {}) 
+    );
+    render(<Favoritos />);
+    expect(screen.getByText(/Cargando favoritos/)).toBeInTheDocument();
+  });
 
-    const { getDocs } = await import('firebase/firestore')
-    getDocs.mockResolvedValue(mockSnapshot)
-
-    renderWithProviders(<Favoritos />)
-
+  it("Maneja error al obtener favoritos", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1" } });
+    getDocs.mockRejectedValueOnce(new Error("Firestore error"));
+    render(<Favoritos />);
     await waitFor(() => {
-      expect(screen.getByText('Casa en la playa')).toBeInTheDocument()
-      expect(screen.getByText('$150 por noche')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText("Error obteniendo favoritos")).toBeInTheDocument();
+    });
+  });
 
-  // TEST 2:
-  it('debe mostrar mensaje cuando no hay favoritos', async () => {
-    const mockSnapshot = {
-      docs: []
-    }
-
-    const { getDocs } = await import('firebase/firestore')
-    getDocs.mockResolvedValue(mockSnapshot)
-
-    renderWithProviders(<Favoritos />)
-
+  it("Muestra mensaje cuando no hay favoritos", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1" } });
+    getDocs.mockResolvedValueOnce({ docs: [] });
+    render(<Favoritos />);
     await waitFor(() => {
-      expect(screen.getByText('No tienes favoritos aún')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText(/No tienes favoritos aún/)).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText("Explorar Propiedades"));
+    expect(mockNavigate).toHaveBeenCalledWith("/");
+  });
 
-  // TEST 3:
-  it('debe eliminar un favorito correctamente', async () => {
-    const mockFavoritos = [
-      {
-        id: 'fav1',
-        titulo: 'Casa en la playa',
-        ubicacion: 'Cancún, México',
-        precio: 150,
-        imagen: 'test-image.jpg',
-        propiedadId: 'prop1',
-        fechaAgregado: { toDate: () => new Date('2024-01-01') }
-      }
-    ]
-
-    const mockSnapshot = {
-      docs: mockFavoritos.map(fav => ({
-        id: fav.id,
-        data: () => fav
-      }))
-    }
-
-    const { getDocs, deleteDoc } = await import('firebase/firestore')
-    getDocs.mockResolvedValue(mockSnapshot)
-    deleteDoc.mockResolvedValue()
-
-    renderWithProviders(<Favoritos />)
-
+  it("Renderiza lista de favoritos", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1" } });
+    getDocs.mockResolvedValueOnce({
+      docs: [
+        {
+          id: "fav1",
+          data: () => ({
+            propiedadId: "prop1",
+            titulo: "Casa Bonita",
+            ubicacion: "Medellín",
+            precio: 100,
+            imagen: "img.jpg",
+            fechaAgregado: { toDate: () => new Date("2025-09-17") },
+          }),
+        },
+      ],
+    });
+    render(<Favoritos />);
     await waitFor(() => {
-      expect(screen.getByText('Casa en la playa')).toBeInTheDocument()
-    })
+      expect(screen.getByText("Casa Bonita")).toBeInTheDocument();
+    });
+  });
 
-    const deleteButton = screen.getByTitle('Eliminar de favoritos')
-    fireEvent.click(deleteButton)
-
+  it("Elimina un favorito correctamente", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1" } });
+    getDocs.mockResolvedValueOnce({
+      docs: [
+        {
+          id: "fav1",
+          data: () => ({
+            propiedadId: "prop1",
+            titulo: "Casa Bonita",
+            ubicacion: "Medellín",
+            precio: 100,
+            imagen: "img.jpg",
+            fechaAgregado: { toDate: () => new Date() },
+          }),
+        },
+      ],
+    });
+    deleteDoc.mockResolvedValueOnce({});
+    render(<Favoritos />);
     await waitFor(() => {
-      expect(deleteDoc).toHaveBeenCalled()
-    })
-  })
-
-  // TEST 4:
-  it('debe manejar errores al obtener favoritos', async () => {
-    const { getDocs } = await import('firebase/firestore')
-    getDocs.mockRejectedValue(new Error('Error de conexión'))
-
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-
-    renderWithProviders(<Favoritos />)
-
+      fireEvent.click(screen.getByTitle("Eliminar de favoritos"));
+    });
     await waitFor(() => {
-      expect(screen.getByText('Error obteniendo favoritos')).toBeInTheDocument()
-    })
+      expect(deleteDoc).toHaveBeenCalledWith(doc(expect.anything(), "favoritos", "fav1"));
+    });
+  });
 
-    consoleSpy.mockRestore()
-  })
-})
+  it("Navega al hacer clic en 'Ver Propiedad'", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1" } });
+    getDocs.mockResolvedValueOnce({
+      docs: [
+        {
+          id: "fav1",
+          data: () => ({
+            propiedadId: "prop1",
+            titulo: "Casa Bonita",
+            ubicacion: "Medellín",
+            precio: 100,
+            imagen: "img.jpg",
+            fechaAgregado: { toDate: () => new Date() },
+          }),
+        },
+      ],
+    });
+    render(<Favoritos />);
+    await waitFor(() => {
+      fireEvent.click(screen.getByText("Ver Propiedad"));
+    });
+    expect(mockNavigate).toHaveBeenCalledWith("/reserva/prop1");
+  });
+
+  it("Maneja error al eliminar favorito", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1" } });
+    getDocs.mockResolvedValueOnce({
+      docs: [
+        {
+          id: "fav1",
+          data: () => ({
+            propiedadId: "prop1",
+            titulo: "Casa Bonita",
+            ubicacion: "Medellín",
+            precio: 100,
+            imagen: "img.jpg",
+            fechaAgregado: { toDate: () => new Date() },
+          }),
+        },
+      ],
+    });
+    deleteDoc.mockRejectedValueOnce(new Error("Firestore error"));
+    render(<Favoritos />);
+    await waitFor(() => {
+      fireEvent.click(screen.getByTitle("Eliminar de favoritos"));
+    });
+    await waitFor(() => {
+      expect(console.error).toHaveBeenCalledWith(
+        "Error eliminando favorito:",
+        expect.any(Error)
+      );
+    });
+  });
+
+  it("Usa placeholder si la imagen falla", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1" } });
+    getDocs.mockResolvedValueOnce({
+      docs: [
+        {
+          id: "fav1",
+          data: () => ({
+            propiedadId: "prop1",
+            titulo: "Casa Bonita",
+            ubicacion: "Medellín",
+            precio: 100,
+            imagen: "img_invalida.jpg",
+            fechaAgregado: { toDate: () => new Date() },
+          }),
+        },
+      ],
+    });
+    render(<Favoritos />);
+    const img = await screen.findByRole("img");
+    fireEvent.error(img);
+    expect(img.src).toContain("Imagen+No+Disponible");
+  });
+});
