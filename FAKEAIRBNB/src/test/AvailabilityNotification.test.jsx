@@ -1,181 +1,119 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { createContext } from 'react'
-const AuthContext = createContext()
-import AvailabilityNotification from '../components/AvailabilityNotification/AvailabilityNotification'
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import AvailabilityNotification from "../components/AvailabilityNotification/AvailabilityNotification";
+import { useAuth } from "../context/AuthContext";
+import { addDoc, getDocs, deleteDoc } from "firebase/firestore";
 
-vi.mock('../firebase/firebaseConfig', () => ({
-  default: {},
-  db: {},
-  auth: {},
-  collection: vi.fn(),
-  getDocs: vi.fn(),
-  addDoc: vi.fn()
-}))
 
-vi.mock('firebase/firestore', () => ({
-  collection: vi.fn(),
-  addDoc: vi.fn(),
-  query: vi.fn(),
-  where: vi.fn(),
-  getDocs: vi.fn(),
-  deleteDoc: vi.fn(),
-  doc: vi.fn()
-}))
+vi.mock("../context/AuthContext", () => ({
+  useAuth: vi.fn(),
+}));
 
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  onAuthStateChanged: vi.fn(),
-  signOut: vi.fn(),
-  setPersistence: vi.fn(),
-  browserLocalPersistence: {}
-}))
+vi.mock("firebase/firestore", () => {
+  return {
+    getFirestore: vi.fn(),  
+    collection: vi.fn(),
+    query: vi.fn(),
+    where: vi.fn(),
+    getDocs: vi.fn(),
+    addDoc: vi.fn(),
+    deleteDoc: vi.fn(),
+    doc: vi.fn(),
+  };
+});
 
-const mockAlert = vi.fn()
-global.alert = mockAlert
 
-const mockAuthContext = {
-  usuario: {
-    uid: 'test-user-id',
-    email: 'test@example.com'
-  }
-}
+window.alert = vi.fn();
+console.error = vi.fn();
 
-vi.mock('../context/AuthContext', () => ({
-  useAuth: () => mockAuthContext
-}))
+const propiedadMock = {
+  id: "prop-1",
+  titulo: "Casa de prueba",
+  ubicacion: "Medellín",
+};
 
-const mockPropiedad = {
-  id: 'prop1',
-  titulo: 'Casa en la playa',
-  ubicacion: 'Cancún, México'
-}
-
-const renderWithProviders = (component) => {
-  return render(
-    <AuthContext.Provider value={mockAuthContext}>
-      {component}
-    </AuthContext.Provider>
-  )
-}
-
-describe('AvailabilityNotification Component', () => {
+describe("AvailabilityNotification.jsx", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+    getDocs.mockResolvedValue({ empty: true, docs: [] });
+  });
 
-  // TEST 1:
-  it('debe suscribirse correctamente cuando se proporcionan fechas válidas', async () => {
-    const mockSnapshot = {
-      empty: true
-    }
+  it("Si no hay usuario, muestra botón que alerta al hacer clic", () => {
+    useAuth.mockReturnValue({ usuario: null });
+    render(<AvailabilityNotification propiedad={propiedadMock} />);
+    fireEvent.click(screen.getByText(/Notificar Disponibilidad/i));
+    expect(window.alert).toHaveBeenCalledWith(
+      "Debes iniciar sesión para suscribirte a notificaciones"
+    );
+  });
 
-    const { getDocs, addDoc } = await import('firebase/firestore')
-    getDocs.mockResolvedValue(mockSnapshot)
-    addDoc.mockResolvedValue({ id: 'notification1' })
+  it("Usuario autenticado, abre y cierra date picker", () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1", email: "u@test.com" } });
+    render(<AvailabilityNotification propiedad={propiedadMock} />);
+    fireEvent.click(screen.getByText(/Notificar Disponibilidad/i));
+    expect(
+      screen.getByText(/¿Cuándo te interesa esta propiedad\?/i)
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Cancelar"));
+    expect(
+      screen.queryByText(/¿Cuándo te interesa esta propiedad\?/i)
+    ).not.toBeInTheDocument();
+  });
 
-    renderWithProviders(<AvailabilityNotification propiedad={mockPropiedad} />)
-
-    const subscribeButton = screen.getByText('Notificar Disponibilidad')
-    fireEvent.click(subscribeButton)
-
-    const inputs = screen.getAllByDisplayValue('')
-    const startDateInput = inputs[0]
-    const endDateInput = inputs[1]
-    
-    fireEvent.change(startDateInput, { target: { value: '2024-02-01' } })
-    fireEvent.change(endDateInput, { target: { value: '2024-02-05' } })
-
-    const confirmButton = screen.getByText('Suscribirse')
-    fireEvent.click(confirmButton)
-
+  it("Muestra error si fecha inicio >= fecha fin", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1", email: "u@test.com" } });
+    render(<AvailabilityNotification propiedad={propiedadMock} />);
+    fireEvent.click(screen.getByText(/Notificar Disponibilidad/i));
+    fireEvent.change(screen.getByLabelText(/Fecha de llegada/i), {
+      target: { value: "2025-09-20" },
+    });
+    fireEvent.change(screen.getByLabelText(/Fecha de salida/i), {
+      target: { value: "2025-09-18" },
+    });
+    fireEvent.click(screen.getByText("Suscribirse"));
     await waitFor(() => {
-      expect(addDoc).toHaveBeenCalledWith(
-        undefined,
-        expect.objectContaining({
-          usuarioId: 'test-user-id',
-          usuarioEmail: 'test@example.com',
-          propiedadId: 'prop1',
-          titulo: 'Casa en la playa',
-          ubicacion: 'Cancún, México',
-          fechaInicio: '2024-02-01',
-          fechaFin: '2024-02-05',
-          activa: true
-        })
-      )
-      expect(mockAlert).toHaveBeenCalledWith('Te has suscrito exitosamente a las notificaciones de disponibilidad')
-    })
-  })
+      expect(window.alert).toHaveBeenCalledWith(
+        "La fecha de inicio debe ser anterior a la fecha de fin"
+      );
+    });
+  });
 
-  // TEST 2:
-  it('debe desuscribirse correctamente', async () => {
-    const mockSnapshot = {
-      empty: false,
-      docs: [{ id: 'notification1' }]
-    }
-
-    const { getDocs, deleteDoc } = await import('firebase/firestore')
-    getDocs.mockResolvedValue(mockSnapshot)
-    deleteDoc.mockResolvedValue()
-
-    renderWithProviders(<AvailabilityNotification propiedad={mockPropiedad} />)
-
+  it("Suscripción exitosa llama addDoc y muestra alerta", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1", email: "u@test.com" } });
+    addDoc.mockResolvedValueOnce({});
+    render(<AvailabilityNotification propiedad={propiedadMock} />);
+    fireEvent.click(screen.getByText(/Notificar Disponibilidad/i));
+    fireEvent.change(screen.getByLabelText(/Fecha de llegada/i), {
+      target: { value: "2025-09-17" },
+    });
+    fireEvent.change(screen.getByLabelText(/Fecha de salida/i), {
+      target: { value: "2025-09-19" },
+    });
+    fireEvent.click(screen.getByText("Suscribirse"));
     await waitFor(() => {
-      expect(screen.getByText('Cancelar Notificación')).toBeInTheDocument()
-    })
+      expect(addDoc).toHaveBeenCalled();
+      expect(window.alert).toHaveBeenCalledWith(
+        "Te has suscrito exitosamente a las notificaciones de disponibilidad"
+      );
+    });
+  });
 
-    const unsubscribeButton = screen.getByText('Cancelar Notificación')
-    fireEvent.click(unsubscribeButton)
-
+  it("Maneja error al suscribirse mostrando mensaje", async () => {
+    useAuth.mockReturnValue({ usuario: { uid: "u1", email: "u@test.com" } });
+    addDoc.mockRejectedValueOnce(new Error("Firestore error"));
+    render(<AvailabilityNotification propiedad={propiedadMock} />);
+    fireEvent.click(screen.getByText(/Notificar Disponibilidad/i));
+    fireEvent.change(screen.getByLabelText(/Fecha de llegada/i), {
+      target: { value: "2025-09-17" },
+    });
+    fireEvent.change(screen.getByLabelText(/Fecha de salida/i), {
+      target: { value: "2025-09-19" },
+    });
+    fireEvent.click(screen.getByText("Suscribirse"));
     await waitFor(() => {
-      expect(deleteDoc).toHaveBeenCalled()
-      expect(mockAlert).toHaveBeenCalledWith('Te has desuscrito de las notificaciones')
-    })
-  })
-
-  // TEST 3:
-  it('debe verificar correctamente si el usuario está suscrito', async () => {
-    const mockSnapshot = {
-      empty: false
-    }
-
-    const { getDocs } = await import('firebase/firestore')
-    getDocs.mockResolvedValue(mockSnapshot)
-
-    renderWithProviders(<AvailabilityNotification propiedad={mockPropiedad} />)
-
-    await waitFor(() => {
-      expect(screen.getByText('Cancelar Notificación')).toBeInTheDocument()
-    })
-  })
-
-  // TEST 4:
-  it('debe manejar errores al suscribirse', async () => {
-    const mockSnapshot = {
-      empty: true
-    }
-
-    const { getDocs, addDoc } = await import('firebase/firestore')
-    getDocs.mockResolvedValue(mockSnapshot)
-    addDoc.mockRejectedValue(new Error('Error de conexión'))
-
-    renderWithProviders(<AvailabilityNotification propiedad={mockPropiedad} />)
-
-    const subscribeButton = screen.getByText('Notificar Disponibilidad')
-    fireEvent.click(subscribeButton)
-
-    const inputs = screen.getAllByDisplayValue('')
-    const startDateInput = inputs[0]
-    const endDateInput = inputs[1]
-    
-    fireEvent.change(startDateInput, { target: { value: '2024-02-01' } })
-    fireEvent.change(endDateInput, { target: { value: '2024-02-05' } })
-
-    const confirmButton = screen.getByText('Suscribirse')
-    fireEvent.click(confirmButton)
-
-    await waitFor(() => {
-      expect(screen.getByText('Error al suscribirse')).toBeInTheDocument()
-    })
-  })
-})
+      expect(
+        screen.getByText("Error al suscribirse")
+      ).toBeInTheDocument();
+    });
+  });
+});

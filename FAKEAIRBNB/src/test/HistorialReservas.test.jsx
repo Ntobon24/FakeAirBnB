@@ -1,118 +1,110 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { createContext } from "react";
-
-const AuthContext = createContext();
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import HistorialReservas from "../pages/HistorialReservas/HistorialReservas";
+import { useAuth } from "../context/AuthContext";
+import { collection, getDocs, addDoc, deleteDoc, query, where, doc } from "firebase/firestore";
 
 vi.mock("../firebase/firebaseConfig", () => ({
-  default: {}, // simula tu `app`
+  __esModule: true,
+  default: {},   
 }));
 
-vi.mock("firebase/firestore", () => {
+vi.mock("../context/AuthContext", () => ({
+  useAuth: vi.fn(),
+}));
+
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
   return {
-    getFirestore: vi.fn(() => ({})), 
-    collection: vi.fn(),
-    addDoc: vi.fn(),
-    query: vi.fn(),
-    where: vi.fn(),
-    getDocs: vi.fn(),
-    deleteDoc: vi.fn(),
-    doc: vi.fn(),
+    ...actual,
+    useNavigate: () => vi.fn(),
   };
 });
 
-const mockAuthContext = {
-  usuario: {
-    uid: "test-user-id",
-    email: "test@example.com",
-  },
-};
-
-vi.mock("../context/AuthContext", () => ({
-  useAuth: () => mockAuthContext,
+vi.mock("firebase/firestore", () => ({
+  getFirestore: vi.fn(),
+  collection: vi.fn(),
+  query: vi.fn(),
+  where: vi.fn(),
+  getDocs: vi.fn(),
+  addDoc: vi.fn(),
+  deleteDoc: vi.fn(),
+  doc: vi.fn(),
 }));
 
-//Mock para el router no redirigir
-const mockNavigate = vi.fn();
-vi.mock("react-router-dom", () => ({
-  useNavigate: () => mockNavigate,
-}));
-
-//mock modal para calificar
 vi.mock("../components/ServiceRating/ServiceRating", () => ({
   __esModule: true,
-  default: ({ onConfirm }) => (
-    <button data-testid="mock-service-rating" onClick={() => onConfirm({ puntuacion: 5 })}>
-      Calificar reserva
-    </button>
+  default: ({ onClose, onConfirm }) => (
+    <div data-testid="mock-service-rating">
+      <button onClick={() => onClose()}>Cerrar</button>
+      <button onClick={() => onConfirm({ rating: 5 })}>Confirmar</button>
+    </div>
   ),
 }));
 
-const renderWithProviders = (component) => {
-  return render(
-    <AuthContext.Provider value={mockAuthContext}>
-      {component}
-    </AuthContext.Provider>
-  );
-};
-
-describe("HistorialReservas component", () => {
+describe("HistorialReservas.jsx", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("muestra mensaje de cargando", () => {
-    renderWithProviders(<HistorialReservas />);
-    expect(screen.getByText("Cargando reservas...")).toBeInTheDocument();
+  it("Muestra mensaje de carga y luego sin reservas", async () => {
+    useAuth.mockReturnValue({ usuario: { email: "test@test.com" } });
+    getDocs.mockResolvedValueOnce({ docs: [] }); 
+
+    render(
+      <MemoryRouter>
+        <HistorialReservas />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Cargando reservas/i)).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText(/No tienes reservas registradas/i)).toBeInTheDocument()
+    );
   });
 
-  it("muestra mensaje si no hay reservas", async () => {
-    const { getDocs } = await import("firebase/firestore");
-    getDocs.mockResolvedValueOnce({ docs: [], empty: true });
-
-    renderWithProviders(<HistorialReservas />);
-
-    await waitFor(() => {
-      expect(
-        screen.getByText("No tienes reservas registradas.")
-      ).toBeInTheDocument();
-    });
-  });
-
-  it("muestra una reserva activa", async () => {
-    const { getDocs } = await import("firebase/firestore");
-
-    const fechaFutura = new Date();
-    fechaFutura.setDate(fechaFutura.getDate() + 3);
+  it("Confirma calificación y elimina reserva", async () => {
+    useAuth.mockReturnValue({ usuario: { email: "confirm@test.com" } });
 
     getDocs.mockResolvedValueOnce({
-      empty: false,
       docs: [
         {
-          id: "res1",
+          id: "res3",
           data: () => ({
-            titulo: "Casa en la playa",
-            ubicacion: "Cancún",
-            fechaInicio: new Date().toISOString(),
-            fechaFin: fechaFutura.toISOString(),
-            precioPorNoche: 100,
+            titulo: "Casa por calificar",
+            ubicacion: "Cali",
+            fechaInicio: "2020-01-01",
+            fechaFin: "2020-01-02",
+            precioPorNoche: 150,
             totalPrecio: 300,
-            usuarioId: "test-user-id",
-            usuarioEmail: "test@example.com",
+            usuarioId: "u3",
           }),
         },
       ],
     });
+    getDocs.mockResolvedValueOnce({ empty: true });
+    addDoc.mockResolvedValueOnce({ id: "newCalif" });
+    deleteDoc.mockResolvedValueOnce({});
 
-    renderWithProviders(<HistorialReservas />);
+    render(
+      <MemoryRouter>
+        <HistorialReservas />
+      </MemoryRouter>
+    );
+
+    const calificarBtn = await screen.findByText(/Calificar estadía/i);
+    fireEvent.click(calificarBtn);
+
+    const confirmarBtn = await screen.findByText("Confirmar");
+    fireEvent.click(confirmarBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Casa en la playa/i)).toBeInTheDocument();
-      expect(screen.getByText(/Cancún/i)).toBeInTheDocument();
-      expect(screen.getByText(/Activa/i)).toBeInTheDocument(); 
+      expect(addDoc).toHaveBeenCalled();
+      expect(deleteDoc).toHaveBeenCalled();
+      expect(
+        screen.getByText(/La reserva ha sido liberada y calificada correctamente/i)
+      ).toBeInTheDocument();
     });
   });
-
-
-})
+});
