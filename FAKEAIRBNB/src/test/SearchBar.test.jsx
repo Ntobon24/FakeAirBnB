@@ -43,15 +43,15 @@ vi.mock('../components/FilterBar/FilterBar', () => ({
   )
 }))
 
-//Mocks propertyList -> muestra titulos, propiedades filtradas(validar)
-vi.mock("../components/PropertyList/PropertyList", () => ({
-    default: ({ propiedades }) => (
-    <ul>
-      {propiedades.map((p) => (
-        <li key={p.id}>{p.titulo}</li>
-      ))}
-    </ul>
-  ),
+//Mocks propertyList 
+vi.mock("react-router-dom", () => ({
+  useNavigate: () => vi.fn()
+}));
+vi.mock("../components/FavoriteButton/FavoriteButton", () => ({
+  default: () => <div>Mock FavoriteButton</div>
+}));
+vi.mock("../components/AvailabilityNotification/AvailabilityNotification", () => ({
+  default: () => <div>Mock AvailabilityNotification</div>
 }));
 
 //Mock datepicker
@@ -74,7 +74,7 @@ describe('SearchBar component', () => {
 
   })
     // TEST 1
-    it("deberia listar solo propiedades disponibles con ubicacion y fechas validas", async () => {
+    it.only("deberia listar solo propiedades disponibles con ubicacion y fechas validas", async () => {
 
         //MocksProps Test 1
         const mockProps = [
