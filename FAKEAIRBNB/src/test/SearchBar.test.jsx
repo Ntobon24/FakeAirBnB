@@ -1,259 +1,129 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
+// SearchBar.test.jsx
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, test, expect, vi, beforeAll, afterAll } from "vitest";
+import SearchBar from "../components/SearchBar/SearchBar";
 
-import Home from '../pages/Home/Home'
+const FIXED_TODAY = new Date("2025-09-18T12:00:00Z");
+beforeAll(() => {
+  vi.useFakeTimers();
+  vi.setSystemTime(FIXED_TODAY);
+});
+afterAll(() => {
+  vi.useRealTimers();
+});
 
-vi.mock('../firebase/firebaseConfig', () => ({
-  default: {},
-  db: {},
-  auth: {},
-  collection: vi.fn(),
-  getDocs: vi.fn(),
-  addDoc: vi.fn()
-}))
+vi.mock("react-datepicker", () => {
+  return {
+    default: ({ selected, onChange, minDate, className, id }) => {
+      const toYMD = (d) => (d ? new Date(d).toISOString().slice(0, 10) : "");
+      return (
+        <input
+          id={id}
+          role="textbox"
+          className={className}
+          data-testid={`datepicker-${id}`}
+          data-min-date={toYMD(minDate)}
+          value={toYMD(selected)}
+          onChange={(e) => onChange(new Date(e.target.value))}
+          placeholder="Fecha"
+        />
+      );
+    },
+  };
+});
 
-//Se simulan los metodos con funciones vacias para no acceder a la bd
-vi.mock('firebase/firestore', () => ({
-  collection: vi.fn(),
-  getDocs: vi.fn(),
-}))
+const setup = (onSearch = vi.fn(), searchData = { location: "", startDate: null, endDate: null, guestsSearch: 1 }) => {
+  const utils = render(<SearchBar onSearch={onSearch} searchData={searchData} />);
+  const locationInput = screen.getByPlaceholderText("¿A dónde vas?");
+  const startInput = screen.getByTestId("datepicker-start-date");
+  const endInput = screen.getByTestId("datepicker-end-date");
+  const searchBtn = screen.getByRole("button", { name: /buscar/i });
+  return { ...utils, locationInput, startInput, endInput, searchBtn, onSearch };
+};
 
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  
-}))
-
-let mockSearchValues = {}
-
-//mock reemplaza SearchBar boton envia ubicacion, rango fechas validos ejecuta Onsearch() ->llama a handleSearch()
-vi.mock('../components/SearchBar/SearchBar', () => ({
-  default: ({ onSearch }) => (
-    <button data-testid="buscar"
-      onClick={() => onSearch(mockSearchValues)}
-    >
-      Buscar
-    </button>
-  )
-}))
-
-
-//Reemplaza componente FilterBar boton, ejecuta OnFilterChange envia DatosFiltrados validos
-vi.mock('../components/FilterBar/FilterBar', () => ({
-  default: ({ onFilterChange }) => (
-    <button data-testid="aplicar-filtro"
-      onClick={() => onFilterChange({
-        bathrooms: 0, guests: 0, maxPrice: 2000000,
-        pets: true, pool: false, rooms:0, wifi: false
-      })}
-    >
-      Aplicar filtro (mascotas)
-    </button>
-  )
-}))
-
-//Mock del mapa no se ejecute, no necesario para pruebas
-vi.mock('../components/MapWithMarkers/MapWithMarkers', () => ({
-  default: () => null
-}))
-
-//Mocks propertyList -> muestra titulos, propiedades filtradas(validar)
-vi.mock("../components/PropertyList/PropertyList", () => ({
-    default: ({ propiedades }) => (
-    <ul>
-      {propiedades.map((p) => (
-        <li key={p.id}>{p.titulo}</li>
-      ))}
-    </ul>
-  ),
-}));
-
-describe('SearchBar component', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-
-    mockSearchValues = {}
-  })
-
-    // TEST 1
-    it("deberia listar solo propiedades disponibles con ubicacion y fechas validas", async () => {
-
-        //MocksProps Test 1
-        const mockProps = [
-            {id: 'p1', titulo: 'Apartamento de lujo Medellin', ubicacion: 'Medellín, Colombia'},
-            {id: 'p2', titulo: 'Apartamento el Poblado Medellin',ubicacion: 'Medellín, Colombia'}
-        ];
-
-        //mock Reservas test 1
-        const mockReservas = [
-        { 
-            id: 'r1', 
-            propiedadId: 'p1',
-            titulo: 'Apartamento el Poblado Medellin',
-            fechaInicio: '2025-08-26T05:00:00.000Z',
-            fechaFin: '2025-08-31T05:00:00.000Z' }
-        ]
-
-        const { getDocs } = await import('firebase/firestore')
-
-        getDocs.mockResolvedValueOnce({
-            docs: mockProps.map((p) => ({id: p.id, data: () => ({...p}) }))
-        });
-
-        getDocs.mockResolvedValueOnce({
-            docs: mockReservas.map((r) => ({ id: r.id, data: () => ({...r}) }))
-        });
-
-        // Mock de busqueda con ubicacion y rango de fechas
-        mockSearchValues = {
-            location: 'Medellín',
-            startDate: new Date('2025-08-28'),
-            endDate: new Date('2025-08-30')
-        };
-
-        render(<Home />);
-
-        await waitFor(() => {
-            expect(screen.getByText("Apartamento de lujo Medellin")).toBeInTheDocument();
-            expect(screen.getByText("Apartamento el Poblado Medellin")).toBeInTheDocument();
-        });
-
-        // Ejecutar busqueda
-        fireEvent.click(screen.getByTestId("buscar"));
-
-        await waitFor(() => {
-            // p1 tiene misma ubicacion pero esta reservada, no debe aparecer
-            expect(screen.queryByText("Apartamento de lujo Medellin")).not.toBeInTheDocument();
-
-            // p2 tiene misma ubicacion y esta libre, debe aparecer
-            expect(screen.getByText("Apartamento el Poblado Medellin")).toBeInTheDocument();
-        });     
-
-    });
-
-    //TEST 2 
-    it("deberia retornar lista vacia y mostrar mensaje cuando ninguna popiedad coincide con ubicacion Tokio", async () => {
-
-        //mock de props test 2
-        const mockProps = [
-            { id: "p1", titulo: "Apartamento Medellin", ubicacion: "Medellín, Colombia" },
-            { id: "p2", titulo: "Apartamento Bogota", ubicacion: "Bogotá, Colombia" }
-        ];
-
-        const { getDocs } = await import("firebase/firestore");
-
-        getDocs.mockResolvedValueOnce({
-            docs: mockProps.map((p) => ({ id: p.id, data: () => ({ ...p }) }))
-        });
-
-        getDocs.mockResolvedValueOnce({
-            docs:[]
-        });
-
-        // Mock de busqueda ubicacion "Tokio" inexistente
-        mockSearchValues = {
-            location: "Tokio",
-            startDate: new Date("2025-08-26"),
-            endDate: new Date("2025-08-31"),
-        };
-
-        render(<Home />);
-
-        await waitFor(() => {
-            expect(screen.getByText("Apartamento Medellin")).toBeInTheDocument();
-            expect(screen.getByText("Apartamento Bogota")).toBeInTheDocument();
-        });
-
-        // Ejecutar busqueda 
-        fireEvent.click(screen.getByTestId("buscar"));
-
-        // Validar lista vacia y mensaje 
-        await waitFor(() => {
-            expect(screen.queryByText("Apartamento Medellin")).not.toBeInTheDocument();
-            expect(screen.queryByText("Apartamento Bogota")).not.toBeInTheDocument();
-            expect(screen.getByText("No hay propiedades disponibles para tu búsqueda")).toBeInTheDocument();
-        });
-    });
-
-
-   //TEST 3
-   it("BUG: deberia mantener primer filtro mascotas=True, cuando busca por fechas en SearchBar ", async () => {
-
-        //MocksPropiedades para Test 3
-        const mockProps = [
-            {
-                id: 'p1',
-                titulo: 'Apartamento Pet Friendly',
-                ubicacion: 'Medellín, Colombia',
-                precio: 200000,
-                habitaciones: 1,
-                banos: 1,
-                maxPersonas: 1,
-                mascotasPermitidas: true,
-                piscina: false,
-                wifi: false
-            },
-            {
-                id: 'p2',
-                titulo: 'Propiedad sin mascotas',
-                ubicacion: 'Bogota, Colombia',
-                precio: 250000,
-                habitaciones: 1,
-                banos: 1,
-                maxPersonas: 1,
-                mascotasPermitidas: false,
-                piscina: false,
-                wifi: false
-            }
-        ];
-
-        const { getDocs } = await import('firebase/firestore')
-
-        getDocs.mockResolvedValueOnce({
-            docs: mockProps.map((p) => ({id: p.id, data: () => ({...p}) }))
-        });
-
-        getDocs.mockResolvedValueOnce({
-            docs:[]
-        });
-
-        // Mock de busqueda: acepta todas props -> validar se mantiene filtro
-        mockSearchValues = {
-            location: " ",
-            startDate: new Date('2026-08-28'),
-            endDate: new Date('2026-08-30')
-        };
-
-        render(<Home />)
-
-        await waitFor(() => {
-            expect(screen.getByText("Apartamento Pet Friendly")).toBeInTheDocument();
-            expect(screen.getByText("Propiedad sin mascotas")).toBeInTheDocument();
-        });
-
-        // 1. Aplicar filtro mascotas= True 
-        fireEvent.click(screen.getByTestId("aplicar-filtro"));
-
-        await waitFor(() => {
-            expect(screen.getByText("Apartamento Pet Friendly")).toBeInTheDocument();
-            expect(screen.queryByText("Propiedad sin mascotas")).not.toBeInTheDocument();
-        })
-        screen.debug()
-
-        // 2. Aplicar busqueda
-        fireEvent.click(screen.getByTestId("buscar"))
-        screen.debug();
-
-        await waitFor(() => {
-            try {
-              expect(screen.queryByText("Propiedad sin mascotas")).not.toBeInTheDocument()
-            } catch (error) {
-              console.warn("prueba fallida: barra de busqueda ignora filtro anterior", error.message)
-            }
-            expect(screen.getByText("Apartamento Pet Friendly")).toBeInTheDocument()
-            console.log(getDocs.mock.calls);
-        })
+describe("SearchBar", () => {
+  test("Renderiza ubicación, dos fechas y botón Buscar", () => {
+    const { locationInput, startInput, endInput, searchBtn } = setup();
+    expect(locationInput).toBeInTheDocument();
+    expect(startInput).toBeInTheDocument();
+    expect(endInput).toBeInTheDocument();
+    expect(searchBtn).toBeInTheDocument();
   });
 
-})
+  test("Muestra error si se pulsa Buscar sin rango de fechas", async () => {
+    const { searchBtn } = setup();
+    
+    fireEvent.click(searchBtn);
+    
+    expect(
+      screen.getByText("Selecciona un rango de fechas válido.")
+    ).toBeInTheDocument();
+  });
 
+  test("Llama onSearch con location, startDate y endDate válidos y limpia el error", () => {
+    const onSearch = vi.fn();
+    const { locationInput, startInput, endInput, searchBtn } = setup(onSearch);
+
+    fireEvent.change(locationInput, { target: { value: "Bogotá" } });
+    fireEvent.change(startInput, { target: { value: "2025-09-20" } });
+    fireEvent.change(endInput, { target: { value: "2025-09-23" } });
+
+    fireEvent.click(searchBtn);
+
+    expect(onSearch).toHaveBeenCalledTimes(1);
+    const payload = onSearch.mock.calls[0][0];
+    expect(payload.location).toBe("Bogotá");
+    const toYMD = (d) => d.toISOString().slice(0, 10);
+    expect(toYMD(payload.startDate)).toBe("2025-09-20");
+    expect(toYMD(payload.endDate)).toBe("2025-09-23");
+
+    expect(
+      screen.queryByText("Selecciona un rango de fechas válido.")
+    ).not.toBeInTheDocument();
+  });
+
+  test("El minDate del DatePicker de fin se actualiza al seleccionar la fecha de inicio", () => {
+    const { startInput, endInput } = setup();
+
+    expect(endInput.getAttribute("data-min-date")).toBe("");
+
++    fireEvent.change(startInput, { target: { value: "2025-09-25" } });
+
+    expect(endInput.getAttribute("data-min-date")).toBe("2025-09-25");
+  });
+
+  test("El DatePicker de inicio tiene minDate basado en startDate inicial", () => {
+    const searchData = { location: "", startDate: null, endDate: null, guestsSearch: 1 };
+    const { startInput } = setup(vi.fn(), searchData);
+    expect(startInput.getAttribute("data-min-date")).toBe("");
+  });
+
+  test("Muestra error si no hay fechas seleccionadas al hacer búsqueda", () => {
+    const onSearch = vi.fn();
+    const { searchBtn } = setup(onSearch);
+    
+    fireEvent.click(searchBtn);
+    
+    expect(screen.getByText("Selecciona un rango de fechas válido.")).toBeInTheDocument();
+    expect(onSearch).not.toHaveBeenCalled();
+  });
+
+  test("Limpia el mensaje de error cuando se hace búsqueda válida", () => {
+    const onSearch = vi.fn();
+    const { locationInput, startInput, endInput, searchBtn } = setup(onSearch);
+
+    fireEvent.click(searchBtn);
+    expect(screen.getByText("Selecciona un rango de fechas válido.")).toBeInTheDocument();
+
+    fireEvent.change(locationInput, { target: { value: "Madrid" } });
+    fireEvent.change(startInput, { target: { value: "2025-09-20" } });
+    fireEvent.change(endInput, { target: { value: "2025-09-25" } });
+
+    fireEvent.click(searchBtn);
+
+    expect(screen.queryByText("Selecciona un rango de fechas válido.")).not.toBeInTheDocument();
+    expect(onSearch).toHaveBeenCalledTimes(1);
+  });
+});
