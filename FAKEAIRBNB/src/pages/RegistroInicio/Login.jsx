@@ -34,7 +34,7 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setShowModalLogin(false);
-      console.log("Usuario logueado:", usuario?.email);
+      
 
       const end = performance.now(); // Marca de fin
       const latency = end - startTime;

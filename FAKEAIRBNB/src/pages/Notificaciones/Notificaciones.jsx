@@ -10,6 +10,7 @@ const Notificaciones = () => {
   const navigate = useNavigate();
   const [notificaciones, setNotificaciones] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!usuario) {
@@ -35,7 +36,6 @@ const Notificaciones = () => {
       
       setNotificaciones(notificacionesData);
     } catch (error) {
-      console.error("Error obteniendo notificaciones:", error);
       setError("Error al cargar las notificaciones");
     } finally {
       setLoading(false);
@@ -48,7 +48,7 @@ const Notificaciones = () => {
       setNotificaciones(notificaciones.filter(notif => notif.id !== notificacionId));
       alert("Notificación eliminada exitosamente");
     } catch (error) {
-      console.error("Error eliminando notificación:", error);
+      setError("Error al eliminar la notificacion");
     }
   };
 
@@ -61,6 +61,15 @@ const Notificaciones = () => {
       <div className="notificaciones-container">
         <h2>Mis Notificaciones</h2>
         <p>Cargando notificaciones...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="notificaciones-container">
+        <h2>Mis Notificaciones</h2>
+        <p>{error}</p>
       </div>
     );
   }

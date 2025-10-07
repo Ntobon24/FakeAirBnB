@@ -88,8 +88,8 @@ describe("SearchBar", () => {
     const { startInput, endInput } = setup();
 
     expect(endInput.getAttribute("data-min-date")).toBe("");
-
-+    fireEvent.change(startInput, { target: { value: "2025-09-25" } });
+    
+    fireEvent.change(startInput, { target: { value: "2025-09-25" } });
 
     expect(endInput.getAttribute("data-min-date")).toBe("2025-09-25");
   });
