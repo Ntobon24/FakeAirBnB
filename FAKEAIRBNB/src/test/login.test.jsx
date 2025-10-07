@@ -62,7 +62,7 @@ describe('Login.jsx - 3 validaciones', () => {
   })
 
   // 1) Login OK con credenciales válidas
-  it('login OK con credenciales válidas', async () => {
+  it('debe iniciar sesión correctamente con credenciales válidas', async () => {
     signInWithEmailAndPassword.mockResolvedValueOnce({
       user: { email: 'test@ejemplo.com' }
     })
@@ -70,6 +70,7 @@ describe('Login.jsx - 3 validaciones', () => {
     renderWithProviders(<Login />)
 
     fireEvent.click(screen.getByRole('button', { name: /iniciar sesión/i }))
+
     fireEvent.change(screen.getByPlaceholderText(/ingresar email/i), {
       target: { value: 'test@ejemplo.com' }
     })

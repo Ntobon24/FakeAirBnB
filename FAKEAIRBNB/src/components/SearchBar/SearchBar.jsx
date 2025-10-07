@@ -28,6 +28,7 @@ const SearchBar = ({ onSearch, searchData }) => {
           <label htmlFor="location">Ubicación</label>
           <input
             id="location"
+            data-testid="location"
             className="input-location"
             type="text"
             value={filters.location}
@@ -58,7 +59,7 @@ const SearchBar = ({ onSearch, searchData }) => {
           />
         </div>
 
-        <button className="btn-search" onClick={handleSearchSubmit}>
+        <button className="btn-search" data-testid="buscar" onClick={handleSearchSubmit}>
           Buscar
         </button>
       </div>

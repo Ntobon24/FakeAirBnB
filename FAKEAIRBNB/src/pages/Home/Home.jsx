@@ -27,10 +27,13 @@ const Home = () => {
     wifi: false,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
 
   useEffect(() => {
     const obtenerPropiedades = async () => {
       setLoading(true);
+      setError(null);
 
       try {
         const querySnapshot = await getDocs(collection(db, "propiedades"));
@@ -42,6 +45,7 @@ const Home = () => {
         setPropiedadesFiltradas(propiedadesArray);
         setPropiedadesFiltradasBase(propiedadesArray);
       } catch (error) {
+        setError("Ocurrio un error obteniendo las propiedades filtradas");
         console.error("Error obteniendo propiedades de firebase:", error);
       } finally {
         setLoading(false);
@@ -63,8 +67,8 @@ const Home = () => {
 
       return reservas;
     } catch (error) {
-      console.error("Error obteniendo todas las reservas:", error);
-      throw error;
+      setError("Ocurrio un error obteniendo las reservas" );
+      console.error("Error obteniendo todas las reservas:");
     } finally {
       setLoading(false);
     }
@@ -119,28 +123,33 @@ const Home = () => {
       const cumpleHabitaciones = propiedad.habitaciones >= datosFiltro.rooms;
       const cumpleBanos = propiedad.banos >= datosFiltro.bathrooms;
       const cumplePrecio = propiedad.precio <= datosFiltro.maxPrice;
-      const cumpleMascotas = datosFiltro.pets
-        ? propiedad.mascotasPermitidas === true
-        : true;
-      const cumplePiscina = datosFiltro.pool
-        ? propiedad.piscina === true
-        : true;
+      const cumplePiscina = datosFiltro.pool ? propiedad.piscina === true : true;
       const cumpleWifi = datosFiltro.wifi ? propiedad.wifi === true : true;
+      const cumpleMascotas = datosFiltro.pets ? propiedad.mascotasPermitidas === true : true;
 
       return (
         cumpleHuespedes &&
         cumpleHabitaciones &&
         cumpleBanos &&
         cumplePrecio &&
-        cumpleMascotas &&
+        cumpleWifi &&
         cumplePiscina &&
-        cumpleWifi
+        cumpleMascotas
       );
     });
 
     setPropiedadesFiltradas(propiedadesDisponiblesFiltradas);
     console.log("Propiedades filtradas:", propiedadesFiltradas);
   };
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Error</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   let contenido;
   if (loading) {

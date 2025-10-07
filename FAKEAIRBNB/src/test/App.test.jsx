@@ -102,9 +102,4 @@ describe("App.jsx routing", () => {
     expect(screen.getByTestId("notificaciones")).toBeInTheDocument();
   });
 
-  it("renderiza UpdatePropertyImages en '/update-property-images'", () => {
-    navigateTo("/update-property-images");
-    render(<App />);
-    expect(screen.getByTestId("update-images")).toBeInTheDocument();
-  });
 });

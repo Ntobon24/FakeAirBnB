@@ -64,7 +64,6 @@ beforeEach(async () => {
   Notificaciones = (await import("../pages/Notificaciones/Notificaciones")).default;
 });
 
-
 describe("Notificaciones (5 pruebas buenas)", () => {
   it(" Sin usuario: redirige a '/' y no consulta Firestore", async () => {
     mockUsuario = null;
