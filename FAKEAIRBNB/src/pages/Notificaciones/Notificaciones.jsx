@@ -56,20 +56,20 @@ const Notificaciones = () => {
     navigate(`/reserva/${propiedadId}`);
   };
 
-  if (loading) {
-    return (
-      <div className="notificaciones-container">
-        <h2>Mis Notificaciones</h2>
-        <p>Cargando notificaciones...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="notificaciones-container">
         <h2>Mis Notificaciones</h2>
         <p>{error}</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="notificaciones-container">
+        <h2>Mis Notificaciones</h2>
+        <p>Cargando notificaciones...</p>
       </div>
     );
   }

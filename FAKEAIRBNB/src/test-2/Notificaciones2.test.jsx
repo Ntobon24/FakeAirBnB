@@ -102,10 +102,7 @@ describe("Componente Notificaciones", () => {
         render(<Notificaciones />);
 
         //Assert
-
-        // loading=true
         expect(screen.getByText(/cargando notificaciones/i)).toBeInTheDocument();
-        // Equivale a: Should().NotBeInTheDocument()
         await waitFor(() =>{
             expect(screen.queryByText(/cargando notificaciones/i)).not.toBeInTheDocument();
             expect(screen.getByText(/mis notificaciones de disponibilidad/i)).toBeInTheDocument();
@@ -113,7 +110,7 @@ describe("Componente Notificaciones", () => {
         });
     });
 
-    it("CTA en estado vacio: 'Explorar Propiedades' navega a '/'", async () => {
+    it("Validar la opcion 'Explorar Propiedades' navega a '/' cuando usuario no tiene notificaciones", async () => {
 
         // Arrange
         // No tiene notificaciones
@@ -126,8 +123,6 @@ describe("Componente Notificaciones", () => {
         await user.click(btn);
 
         // Assert
-
-         // Equivale a: Should().HaveBeenCalledWith("/")
         expect(navigateMock).toHaveBeenCalledWith("/"); 
             
     });
@@ -135,22 +130,16 @@ describe("Componente Notificaciones", () => {
     it("Lista con 1 notificacion: renderiza datos, arma la query por usuario y 'Ver Propiedad' navega a /reserva/:id", async () => {
   
         // Arrange
-        // Mock Lista con 1 notificacion
         mockGetDocsOnce([{ id: "n-1", data: makeNotif() }]);
 
         
         // Act
         render(<Notificaciones />);
-        
-        // Espera cargue pagina
         await screen.findByText(/mis notificaciones de disponibilidad/i);
-        
         const card = await findCardByTitle("Cabaña del Lago");
         const inCard = within(card);
 
         // Assert
-
-        // equivale a Should().BeVisible()
         expect(inCard.getByText("Cabaña del Lago")).toBeInTheDocument();         
         expect(inCard.getByText(/activa/i)).toBeInTheDocument();          
 
@@ -163,14 +152,11 @@ describe("Componente Notificaciones", () => {
     it("Click en 'Ver Propiedad' navega ruta detalles de la propiedad", async () => {
 
         // Arrange
-        // Mock Lista con 1 notificacion
         mockGetDocsOnce([{ id: "n-1", data: makeNotif() }]);
   
 
         //Act: Interaccion user click ver propiedad de notificacion
         render(<Notificaciones />);
-        
-        //Espera carga pagina
         await screen.findByText(/mis notificaciones de disponibilidad/i);
         const card = await findCardByTitle("Cabaña del Lago");
         const inCard = within(card);
@@ -194,8 +180,6 @@ describe("Componente Notificaciones", () => {
 
         //Act: nteraacion Click boton de eliminar notif de propiedad
         render(<Notificaciones />);
-
-        // Espera carga tarjeta
         const card = await findCardByTitle("Cabaña del Lago");
         const btnEliminar = within(card).getByRole("button", { name: /eliminar/i });
         await user.click(btnEliminar);
@@ -227,7 +211,25 @@ describe("Componente Notificaciones", () => {
         });
     });
 
+    it("Error al eliminar notificacion: muestra mensaje de error", async () => {
 
+        // Arrange
+        mockGetDocsOnce([{ id: "n-1", data: makeNotif() }]);
 
+        // Simula deleteDoc: error firebase
+        docMock.mockReturnValueOnce({ __DOC__: true });
+        deleteDocMock.mockRejectedValueOnce(new Error("Error eliminando notificacion"));
+        render(<Notificaciones />);
+
+        // Act interaccion
+        const card = await findCardByTitle("Cabaña del Lago");
+        const btnEliminar = within(card).getByRole("button", { name: /eliminar/i });
+        await user.click(btnEliminar);
+
+        // Assert
+        await waitFor(() => {
+            expect(screen.getByText("Error al eliminar la notificacion")).toBeInTheDocument();
+        });
+    });
 
 });
